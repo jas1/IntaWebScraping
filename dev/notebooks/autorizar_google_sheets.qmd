@@ -1,0 +1,28 @@
+
+# generar token de autorizacion para google sheets para sesion no interactiva: 
+
+
+```{r}
+library(googlesheets4)
+    
+# Set authentication token to be stored in a folder called `.secrets`
+options(gargle_oauth_cache = here::here("config",".secrets"))
+
+# Authenticate manually
+googlesheets4::gs4_auth()
+
+# If successful, the previous step stores a token file.
+# Check that a file has been created with:
+list.files(here::here("config",".secrets"))
+
+# Check that the non-interactive authentication works by first deauthorizing:
+googlesheets4::gs4_deauth()
+
+# Authenticate using token. If no browser opens, the authentication works.
+googlesheets4::gs4_auth(cache = here::here("config",".secrets"), email = "jspairani@gmail.com")
+
+ss <- googlesheets4::gs4_get("https://docs.google.com/spreadsheets/d/1wayzYcUboTRu3BNpfJxWQXEJ8-lcWJW0UBC9iAqE4xo/edit#gid=0")
+googlesheets4::sheet_append(ss, data.frame(time=Sys.time()))
+
+```
+

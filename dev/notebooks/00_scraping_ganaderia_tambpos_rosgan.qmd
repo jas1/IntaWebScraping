@@ -1,0 +1,111 @@
+# objetivo
+
+analisis exploratorio de scraping de la pagina de rosgan. 
+
+# detalle
+
+de la pagina de rosgan > https://www.rosgan.com.ar/precios-rosgan/  
+
+obtenemos categorias de ganaderia y tambo
+
+# ganaderia analisis preliminar
+
+
+cantidad: -102.4176+ (120.8458*predio)-(0.3*potrero)
+precio: (precio "terneros/as"* *175) 
+pagina: https://www.rosgan.com.ar/precios-rosgan/ 
+nagegacion: 
+div .marquee > div .marquee-content >  UL
+li .caja-titulo-verde >
+li .caja-indice > span .indice text | span .valor text
+filtrar el que tenga .indice == "terneros/as"
+
+## ganaderia: scrap sample
+
+```{r}
+source(here::here("R","get_raw_web_file.R" ))
+source(here::here("R","extract_rosgan_updated_header.R" ))
+#install.packages("rvest")
+# periodicidad diaria , si dia no existe entonces bajar 
+library(rvest)
+
+
+
+web_page <- "https://www.rosgan.com.ar/precios-rosgan/"
+template_page_name <- "{timestamp_webscrap}_precios_rosgan.html"
+output_path <- "tmp"
+
+output_dl_file <- get_raw_web_file(url_src = web_page,template_output = template_page_name,output_path = output_path,timestamp_format = "%Y%m%d")
+
+loaded_html <- rvest::read_html(output_dl_file)
+
+df_caja_verde <- extract_rosgan_updated_header(rvest_html_object=loaded_html)
+
+#   div .marquee > div .marquee-content >  UL
+# li .caja-titulo-verde >
+# li .caja-indice > span .indice text | span .valor text
+# filtrar el que tenga .indice == "terneros/as"
+
+df_caja_verde |>  dplyr::filter(indices_tabla=="Terneros/as")
+```
+                    
+# Tambo: analisis preliminar            
+
+cantidad: 1.56+13.45409*predio
+precio: precio "vaca con garantia de preñez"
+pagina: https://www.rosgan.com.ar/precios-rosgan/ 
+nagegacion:
+div .marquee > div .marquee-content >  UL
+li .caja-titulo-verde >
+li .caja-indice > span .indice text | span .valor text
+filtrar el que tenga .indice == "vaca con garantia de preñez"
+
+## scrap sample 
+
+igual que el de ganaderia, solo que filtrado por otro filtro.
+
+
+```{r}
+# traerse el ultimo bajado , es solo para prueba 
+
+
+source(here::here("R","leer_configuracion.R"))
+source(here::here("R","extract_rosgan_updated_header.R"))
+
+leer_configuracion_scrap <- leer_configuracion()
+
+output_dl_file <- list.files(here::here(leer_configuracion_scrap[["scrap_raw_store_ganaderia_folder"]]),full.names = TRUE)[[1]]
+
+loaded_html <- rvest::read_html(output_dl_file)
+
+df_caja_verde <- extract_rosgan_updated_header(rvest_html_object=loaded_html)
+
+df_caja_verde |>  dplyr::filter(indices_tabla=="vacas c/gtía. de preñez")  
+
+```
+
+# hallazgo: historia. 
+
+misma pagina de rosgan
+
+```{r}
+source(here::here("R","extract_rosgan_history" ))
+
+remates_history <- extract_rosgan_history(output_dl_file)
+
+
+  remates_history |> 
+    dplyr::filter(categorias_remates %in% c("Terneros/as"	))
+  
+  remates_history |> 
+    dplyr::filter(categorias_remates %in% c("Vientres con garantía de preñez"	))
+
+  remates_history |> 
+    dplyr::filter(stringr::str_detect(indices_fecha,"12 de octubre de 2022"))
+  df_caja_verde
+
+```
+
+# consideracioens
+
+- en terneros/as no concide history con caja verde. puede que la caja verde diga un valor diario mientaras que history se quedo en una fecha 

@@ -48,3 +48,8 @@ la idea es que la informacion se actualice sola en base a las diferentes paginas
 - los calculos internos de la app cambian 
 - foco en el scrap.
 - luego revisar el calculo y caer con una propuesta a validar por mati
+
+# consultas mati: 
+
+- como tomamos las precipitaciones: porque vienen en formato diario , deberia ser promedio agrupado entre N dias, entre n estaciones pertenecientes por distrito > si el promedio supera los 20 mm , entonces penalizacion.
+

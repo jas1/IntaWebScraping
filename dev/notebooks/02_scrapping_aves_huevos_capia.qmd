@@ -23,8 +23,6 @@ parecen ser posts con talbas semanales de esas tablas hay que extraer las que di
 
 ## ejemplo scrapping huevo
 
-no navega, buscando otra alternativa
-
 ```{r}
 source(here::here("R","get_raw_web_file.R" ))
 #install.packages("rvest")
@@ -57,7 +55,7 @@ httr::HEAD(web_page, httr::config(verbose = TRUE),httr::add_headers("user-agent"
 html_loaded <- rvest::read_html(output_dl_file)
 ```
 
-# revisando los header
+# revisando la pagina
 ```{r}
 
 obtener_tablas <- html_loaded|>
@@ -88,18 +86,7 @@ obtener_tablas <- html_loaded|>
   })
 
 obtener_tablas
-# 
-# obtener_tablas[[1]] |>
-#   dplyr::filter(stringr::str_detect(stringr::str_to_upper(X1),"REFERENCIA SEMANA"))
-# obtener_tablas[[1]] |> 
-#   dplyr::filter(stringr::str_detect(stringr::str_to_lower(X1),"polla recriada de 16 semanas blanca"))
-# 
-# obtener_tablas[[1]] |> 
-#   dplyr::filter(stringr::str_detect(stringr::str_to_lower(X1),"polla recriada de 18 semanas blanca"))
-# 
-# obtener_tablas <- html_loaded|>
-#    # rvest::html_elements("#sp-main-body") 
-#   rvest::html_elements(".post_intro table") 
+ 
 obtener_tablas |>  colnames()
 ```
 

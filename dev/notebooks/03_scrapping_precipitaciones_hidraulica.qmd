@@ -1,0 +1,317 @@
+# objetivo
+
+analisis exploratorio de scraping de la pagina de hidraulica 
+
+# detalle
+
+de la pagina de hidraulica > https://www.hidraulica.gob.ar/redPluviometricaHist.php
+
+obtenemos categorias de : precipitaciones
+
+
+# mapeo 
+
+la pagina tienen un combobox | select ;
+que envia el valor via post de la varialbe: "selectedFecha" 
+y el valor viaja con el formato: "2023-01-01"
+si se accede a la pagina directo te trae el dia mas actual ( generalmente ayer )
+y te da un mensaje que dice: 
+
+"Precipitaciones registradas hasta las 09:00hs del día 05/01/2023 (24 horas)"
+
+luego varias tablas, una por departamento.
+las tablas tienen un header que dice " Dpto: {nombre}"
+luego otra row de header que dice: "estacion | precipitacion"
+
+finalmente una tabla de 2 columnas con los valores de 
+{nombre_estacion} | {precipitacion } mm
+
+los valores de precipitacion pueden venir en : 
+nro o --
+
+se debe agregar distrito , segun el mapeo de estaciones proveido.
+para el calculo de penalizacion es : agrupar por distrito 
+
+ejemplo: 
+
+Dpto: Colón
+Estación | Precipitación
+Arroyo Barú | 0 mm
+
+el dataframe a generar es algo como algo como: 
+
+estacion | departamento |  distrito | fecha | precipitacion | fecha_actualizacion
+
+### mapeo entre estacion y distrito
+
+para el departamento de parana: 
+
+```{r}
+mapeo_estacion_distrito_dpto_parana <- tibble::tribble(
+  ~departamento,                                  ~estacion,              ~distrito, ~precipitacion,
+       "Paraná",                 "Hernandarias - Comisaría",        "ANTONIO TOMAS",         "0 mm",
+       "Paraná",                 "Pueblo Brugo - Comisaría",        "ANTONIO TOMAS",         "0 mm",
+       "Paraná",                           "El Espinillo -",            "ESPINILLO",         "0 mm",
+       "Paraná",                              "Engenfeld -",            "ESPINILLO",         "0 mm",
+       "Paraná",                "Arroyo María - Nidia Faez", "MARIA GRANDE PRIMERA",         "0 mm",
+       "Paraná",                  "Tabossi - Municipalidad", "MARIA GRANDE PRIMERA",         "0 mm",
+       "Paraná",                    "Hasenkamp - Comisaría", "MARIA GRANDE SEGUNDA",         "0 mm",
+       "Paraná", "Pueblo Bellocq - Destacamento Las Garzas", "MARIA GRANDE SEGUNDA",         "0 mm",
+       "Paraná",                   "Quebracho - El Ramblón",            "QUEBRACHO",         "0 mm",
+       "Paraná",                        "Seguí - Comisaría",            "QUEBRACHO",         "0 mm",
+       "Paraná",                        "Viale - Comisaría",            "QUEBRACHO",         "0 mm",
+       "Paraná",              "Paraná - Escuela de Policía",                "SAUCE",         "0 mm",
+       "Paraná",                "Villa Fontana - Comisaría",                "SAUCE",         "0 mm",
+       "Paraná",                      "Cerrito - Comisaría",                 "TALA",         "0 mm",
+       "Paraná",                "Curtiembre - Destacamento",                 "TALA",         "0 mm",
+       "Paraná",                                "La Picada",                 "TALA",         "0 mm",
+       "Paraná",                "Villa Urquiza - Comisaría",                 "TALA",       "--- mm"
+  )
+
+```
+
+
+## ejemplo scrapping precipitacion
+
+### scrapping ultimo dia disponible:
+
+```{r}
+source(here::here("R","get_raw_web_file.R" ))
+#install.packages("rvest")
+# periodicidad diaria , si dia no existe entonces bajar 
+library(rvest)
+
+
+
+web_page <- "https://www.hidraulica.gob.ar/redPluviometricaHist.php"
+template_page_name <- "{timestamp_webscrap}_precipitaciones_hidraulica.html"
+output_path <- "tmp/raw/precipitaciones"
+
+output_dl_file <- get_raw_web_file(url_src = web_page,template_output = template_page_name,output_path = output_path,timestamp_format = "%Y%m%d")
+```
+
+```{r}
+html_loaded <- rvest::read_html(output_dl_file)
+
+```
+
+```{r}
+#mensaje <- 
+pp_tables <- html_loaded |> rvest::html_elements("table")
+
+# mensaje <- pp_tables[[2]] |> rvest::html_table()
+pp_tables[[2]] |> 
+  rvest::html_table() |> 
+  dplyr::filter(stringr::str_detect(X1,"Precipitaciones registradas hasta")) |> 
+  dplyr::pull(X1)
+
+length(pp_tables)
+# total 36 tablas
+# son 17 departamentos
+# total > -2 ( por las primeras 2) 
+# total > - 17 ( deptos)  * 2 ( tablas por depto: gris+data y gris ) = 34
+# 36 == 2 + ( 17 * 2) => TRUE
+# la 1 te da todo 
+# la 2 te da el mensaje y el resto 
+# la 3 , ya es un departamento: gris + tabla >
+# la 4 , ya es un departamento: solo la parte gris donde dice el nombre de la 3 > 1 row + X1=="Dpto:"
+# la 5 , ya es otro departamento: gris + tabla
+# la 6 , ya es un departamento: solo la parte gris donde dice el nombre de la 5
+# la 7 , ya es otro departamento: gris + tabla
+# la 8 , ya es un departamento: solo la parte gris donde dice el nombre de la 7
+
+pp_tables[[4]] |>  rvest::html_table() 
+pp_tables[[5]] |>  rvest::html_table() 
+pp_tables[[6]] |>  rvest::html_table() 
+pp_tables[[7]] |>  rvest::html_table() 
+pp_tables[[8]] |>  rvest::html_table()
+```
+
+
+```{r}
+source(here::here("R","extract_precipitaciones_table_identificar_tablas_parsear_gris_y_data_tabla.R"))
+source(here::here("R","extract_precipitaciones_table_identificar_tablas.R"))
+source(here::here("R","extract_precipitaciones_table.R"))
+
+html_loaded <- rvest::read_html(output_dl_file)
+
+resultado <- extract_precipitaciones_table(html_loaded)
+
+resultado |> head(1) |>  paste0(collapse=",")
+resultado |> colnames() |>  paste0(collapse=",")
+# pp_tables[[2]] |>  rvest::html_table()  |>  dplyr::slice_head(n=1) 
+# pp_tables[[1]] |>  rvest::html_table()  |>  dplyr::slice_head(n=1) |>
+#     dplyr::filter(stringr::str_detect(X1,"Precipitaciones Históricas de la Red Pluviométrica Provincia")) |> nrow()
+# parsear tablas
+```
+
+
+```{r}
+
+  
+# mensaje
+```
+
+
+
+### scrapping dia particular
+
+se puede bajar todos los dias 
+
+la pagina tienen un combobox | select ;
+que envia el valor via post de la varialbe: "selectedFecha" 
+y el valor viaja con el formato: "2023-01-01"
+
+```{r}
+source(here::here("R","get_raw_dia_precipitacion.R"))
+library(rvest)
+library(httr)
+
+
+web_page <- "https://www.hidraulica.gob.ar/redPluviometricaHist.php"
+timestamp_format="%Y%m%d"
+dia_elegido <- "2023-01-01"
+template_output <- "{timestamp_webscrap}_precipitaciones_hidraulica_dia_{fecha_yyyy_mm_dd}.html"
+output_path <- "tmp/raw/precipitaciones"
+
+prueba_1 <- get_raw_dia_precipitacion(url_src = web_page,
+                          fecha_yyyy_mm_dd = "2022-12-30",
+                          template_output = template_output,
+                          output_path=output_path,
+                          timestamp_format=timestamp_format)
+
+prueba_2 <- get_raw_dia_precipitacion(url_src = web_page,
+                          fecha_yyyy_mm_dd = "2023-01-01",
+                          template_output = template_output,
+                          output_path=output_path,
+                          timestamp_format=timestamp_format)
+
+# no hay datos para ese dia:
+# devuelve la pagina , dice los departamentos, pero no tienenn valores las tablas.
+prueba_1x <- get_raw_dia_precipitacion(url_src = web_page,
+                          fecha_yyyy_mm_dd = "2022-12-31",
+                          template_output = template_output,
+                          output_path=output_path,
+                          timestamp_format=timestamp_format)
+
+```
+
+#### parseo resultado 
+
+```{r}
+source(here::here("R","extract_precipitaciones_table_identificar_tablas_parsear_gris_y_data_tabla.R"))
+source(here::here("R","extract_precipitaciones_table_identificar_tablas.R"))
+source(here::here("R","extract_precipitaciones_table.R"))
+
+html_loaded <- rvest::read_html(prueba_1x)
+resultado <- extract_precipitaciones_table(html_loaded)
+resultado |> head(1) |>  paste0(collapse=",")
+
+html_loaded <- rvest::read_html(prueba_1)
+resultado <- extract_precipitaciones_table(html_loaded)
+resultado |> head(1) |>  paste0(collapse=",")
+
+html_loaded <- rvest::read_html(prueba_2)
+resultado <- extract_precipitaciones_table(html_loaded)
+resultado |> head(1) |>  paste0(collapse=",")
+```
+
+### scrapping varios dias
+
+se puede bajar varios para ver cual es el ultimo , tal vez la ultima semana o algun periodo a determinar. 
+charlarlo con mati 
+la idea aca seria dada una lista de dias ponele 1 semana, ir a buscar todos los datos
+
+primero seria bajar todo , y luego seria en otro metodo tipo transformacion 
+tener el promedio ese.
+
+```{r}
+library(rvest)
+library(httr)
+source(here::here("R","get_raw_dia_precipitacion.R"))
+source(here::here("R","extract_precipitaciones_table_identificar_tablas_parsear_gris_y_data_tabla.R"))
+source(here::here("R","extract_precipitaciones_table_identificar_tablas.R"))
+source(here::here("R","extract_precipitaciones_table.R"))
+
+
+lista_dias <- c(seq(lubridate::ymd("2022-12-26"),lubridate::ymd("2023-01-01"),by="1 day"))
+web_page <- "https://www.hidraulica.gob.ar/redPluviometricaHist.php"
+timestamp_format="%Y%m%d"
+#dia_elegido <- "2023-01-01"
+template_output <- "{timestamp_webscrap}_precipitaciones_hidraulica_{lote_dl}_{fecha_yyyy_mm_dd}.html"
+
+lote_dl <- "test"
+output_path <- "tmp/raw/precipitaciones"
+
+df_dias <- lista_dias |> 
+  tibble::enframe(name="orden",value="fecha")
+
+df_dias_result <- df_dias |> 
+  dplyr::mutate(resu_dl=purrr::pmap(.l=list(
+    url_src = web_page,
+    template_output = template_output,
+    output_path = output_path,
+    timestamp_format = timestamp_format,
+    lote_dl=lote_dl,
+    fecha_yyyy_mm_dd = fecha  ),
+    .f=get_raw_dia_precipitacion))
+df_dias_result
+
+```
+#### parseo y resumen de los dias 
+
+```{r}
+
+source(here::here("R","extract_precipitaciones_table_identificar_tablas_parsear_gris_y_data_tabla.R"))
+source(here::here("R","extract_precipitaciones_table_identificar_tablas.R"))
+source(here::here("R","extract_precipitaciones_table.R"))
+
+source(here::here("R","leer_datos_precipitaciones_crudos_func.R"))
+source(here::here("R","procesar_datos_precipitaciones_valores_actuales_func.R"))
+source(here::here("R","auth_google_sheets.R"))
+source(here::here("R","get_deptos_distritos_map.R"))
+source(here::here("R","transformar_datos_precipitaciones_valores_actuales_func.R"))
+source(here::here("R","precipitaciones_promedio_por_depto_distrito_func.R"))
+
+cfg_load <- leer_configuracion()
+
+df_map <- get_deptos_distritos_map(config = cfg_load)
+
+df_dias_result2 <- df_dias_result |> 
+  dplyr::mutate(load_dl=purrr::map(.x=resu_dl,
+                                   .f=leer_datos_precipitaciones_crudos_func)) |> 
+  
+  dplyr::mutate(parse_dl=purrr::map(.x=load_dl,
+                                    .f=procesar_datos_precipitaciones_valores_actuales_func)) |> 
+  dplyr::mutate(transform_raw=purrr::map(.x=parse_dl,
+                                         df_mapping=df_map,
+                                         .f=transformar_datos_precipitaciones_valores_actuales_func)) |> 
+  dplyr::mutate(promedios_df=purrr::map(.x=transform_raw,
+                                         .f=precipitaciones_promedio_por_depto_distrito_func)) 
+
+
+promedio_precipitacion_dias_depto_distrito_func <- function(df_fecha_promedio_df){
+  # dado un df que tiene una columna fecha y una columna dataframe de resultado: precipitaciones_promedio_por_depto_distrito_func , agrupa el promedio de todas las fechas.
+  ret <- df_fecha_promedio_df |> 
+  dplyr::select(fecha,promedios_df) |> 
+  tidyr::unnest(promedios_df) |> 
+  dplyr::group_by(departamento,distrito) |> 
+  dplyr::summarise(mm_pp_avg=round(mean(mm_pp_avg,na.rm=TRUE),digits = 2),periodo=paste0(collapse=";",fecha))
+  ret
+} 
+#df_dias_result2
+df_dias_result2[["parse_dl"]]
+
+df_dias_result2[[3,"parse_dl"]]
+df_dias_result2[[3,"transform_raw"]][[1]] |> 
+  dplyr::group_by(departamento,distrito) |> 
+  dplyr::summarise(mm_pp_avg=round(mean(valores_tabla,na.rm=TRUE),digits = 2))
+
+df_dias_result2[[3,"promedios_df"]][[1]]
+
+promedio_precipitacion_dias_depto_distrito_func
+promedio_precipitacion_dias_depto_distrito_func(df_dias_result2)
+
+
+```
+

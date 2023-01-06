@@ -35,6 +35,12 @@ list(
     obtener_datos_recursos_ave_huevos,
     get_datos_recursos_ave_huevos_func(config_valida)
   ),
+  # 1.c obtener los datos crudos: precipitaciones: bajar la pagina.
+  # devuelve el path del archivo generado
+  targets::tar_target(
+    obtener_datos_recursos_precipitaciones,
+    get_datos_precipitaciones_func(config_valida)
+  ),
   # 2. procesar los datos obtenidos: ganaderia: leer los datos crudos
   # devuelve el html
   targets::tar_target(
@@ -53,7 +59,12 @@ list(
     leer_datos_ave_huevos_crudos,
     leer_datos_ave_huevos_crudos_func(obtener_datos_recursos_ave_huevos)
   ),
-
+  # 2.c procesar los datos obtenidos: precipitaciones: leer los datos precipitaciones
+  # devuelve el html
+  targets::tar_target(
+    leer_datos_precipitaciones_crudos,
+    leer_datos_precipitaciones_crudos_func(obtener_datos_recursos_precipitaciones)
+  ),
   # 3. procesar los datos obtenidos: ganaderia: extraer los datos
   targets::tar_target(
     procesar_datos_ganaderia_valores_actuales,
@@ -68,6 +79,16 @@ list(
   targets::tar_target(
     procesar_datos_ave_huevos_valores_actuales,
     procesar_datos_ave_huevos_valores_actuales_func(leer_datos_ave_huevos_crudos)
+  ),
+  # 3.c.x mapeo
+  targets::tar_target(
+    deptos_distritos_map,
+    get_deptos_distritos_map(config_valida)
+  ),
+  # 3.c procesar los datos obtenidos: precipitaciones: extraer los datos
+  targets::tar_target(
+    procesar_datos_precipitaciones_valores_actuales,
+    procesar_datos_precipitaciones_valores_actuales_func(leer_datos_precipitaciones_crudos)
   ),
   # 4. procesar los datos obtenidos: ganaderia: transformar los datos
   targets::tar_target(
@@ -89,10 +110,15 @@ list(
     transformar_datos_carne_ave_valores_actuales,
     transformar_datos_carne_ave_valores_actuales_func(procesar_datos_ave_huevos_valores_actuales)
   ),
-  # 4.d procesar los datos obtenidos: carne_ave: transformar los datos
+  # 4.d procesar los datos obtenidos: huevo: transformar los datos
   targets::tar_target(
     transformar_datos_huevo_valores_actuales,
     transformar_datos_huevo_valores_actuales_func(procesar_datos_ave_huevos_valores_actuales)
+  ),
+  # 4.e procesar los datos obtenidos: precipitaciones: transformar los datos
+  targets::tar_target(
+    transformar_datos_precipitaciones_valores_actuales,
+    transformar_datos_precipitaciones_valores_actuales_func(procesar_datos_precipitaciones_valores_actuales,deptos_distritos_map)
   ),
   # 5. procesar los datos obtenidos: ganaderia: almacenar los datos
   targets::tar_target(
@@ -119,6 +145,11 @@ list(
     almacenar_datos_huevo_valores_actuales,
     almacenar_datos_huevo_valores_actuales_func(transformar_datos_huevo_valores_actuales,config_valida)
   ),
+  # 5.e procesar los datos obtenidos: precipitaciones: almacenar los datos
+  targets::tar_target(
+    almacenar_datos_precipitaciones_valores_actuales,
+    almacenar_datos_precipitaciones_valores_actuales_func(transformar_datos_precipitaciones_valores_actuales,config_valida)
+  ),
   # 6. disponibilizar los datos procesados
   targets::tar_target(
     disponibilizar_datos_ganaderia_valores_actuales,
@@ -143,6 +174,11 @@ list(
   targets::tar_target(
     disponibilizar_datos_huevo_valores_actuales,
     disponibilizar_datos_huevo_valores_actuales_func(almacenar_datos_huevo_valores_actuales,config_valida)
+  ),
+  # 6.e disponibilizar los datos procesados
+  targets::tar_target(
+    disponibilizar_datos_precipitaciones_valores_actuales,
+    disponibilizar_datos_precipitaciones_valores_actuales_func(almacenar_datos_precipitaciones_valores_actuales,config_valida)
   ),
   # 7. validar datos disponibilizados
   targets::tar_target(
@@ -169,13 +205,18 @@ list(
     validar_disponible_datos_carne_ave_valores_actuales,
     validar_disponible_datos_carne_ave_valores_actuales_func(almacenar_datos_carne_ave_valores_actuales,disponibilizar_datos_carne_ave_valores_actuales,config_valida)
   ),
-  # repetir pasos para resto de recursos y lluvias
-  # 3. pre process data
-  # targets::tar_target(
-  #   data,
-  #   raw_data %>%
-  #     filter(!is.na(Ozone))
-  # ),
+  # 7.e validar datos disponibilizados
+  targets::tar_target(
+    validar_disponible_datos_precipitaciones_valores_actuales,
+    validar_disponible_datos_precipitaciones_valores_actuales_func(almacenar_datos_precipitaciones_valores_actuales,disponibilizar_datos_precipitaciones_valores_actuales,config_valida)
+  ),
+  # recordar que una web no tiene que procesar tiene que comer directamente lo mas posible.
+  # todo lo que dependa de predios , va a estar agarrado de la app.
+  # que son los predios pre cargados
+  # puedo tratar de dejar todo eso pre calculado o solo actualizar el excel , eso a revisar.
+
+
+
   # # 4. make histogram plot
   # targets::tar_target(hist, create_plot(data)),
   # # 5. make fit of data

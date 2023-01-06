@@ -64,28 +64,31 @@ testthat::test_that("get_datos_recursos_ave_huevos_func",{
 })
 
 # 03 - leer_datos_huevo_crudos -------------------------------------------------
+# funciona en el test, pero cuando se corre en targets no se puede separar la parte de xml
+# asi tira el error de Last error: external pointer is not valid
+# asi quito la tarea de leer, y la incluyo en la siguiente de procesar.
 # leer_datos_huevo_crudos <- leer_datos_ave_huevos_crudos_func(obtener_datos_recursos_huevo)
-
-testthat::test_that("leer_datos_ave_huevos_crudos_func",{
-  #Sys.setenv(R_CONFIG_ACTIVE = "default")
-  source(here::here("R","leer_configuracion.R"))
-  source(here::here("R","get_datos_recursos_ave_huevos_func.R"))
-  source(here::here("R","get_raw_web_file.R"))
-  source(here::here("R","leer_datos_ave_huevos_crudos_func.R"))
-
-  leer_configuracion_scrap <- leer_configuracion()
-
-  # ----------------------------
-  get_datos_raw <- get_datos_recursos_ave_huevos_func(leer_configuracion_scrap)
-  # ----------------------------
-
-  leer_datos <- leer_datos_ave_huevos_crudos_func(get_datos_raw)
-
-
-  testthat::expect_type(leer_datos,type = "list")
-  testthat::expect_equal(class(leer_datos),expected = c("xml_document","xml_node"))
-
-})
+#
+# testthat::test_that("leer_datos_ave_huevos_crudos_func",{
+#   #Sys.setenv(R_CONFIG_ACTIVE = "default")
+#   source(here::here("R","leer_configuracion.R"))
+#   source(here::here("R","get_datos_recursos_ave_huevos_func.R"))
+#   source(here::here("R","get_raw_web_file.R"))
+#   source(here::here("R","leer_datos_ave_huevos_crudos_func.R"))
+#
+#   leer_configuracion_scrap <- leer_configuracion()
+#
+#   # ----------------------------
+#   get_datos_raw <- get_datos_recursos_ave_huevos_func(leer_configuracion_scrap)
+#   # ----------------------------
+#
+#   leer_datos <- leer_datos_ave_huevos_crudos_func(get_datos_raw)
+#
+#
+#   testthat::expect_type(leer_datos,type = "list")
+#   testthat::expect_equal(class(leer_datos),expected = c("xml_document","xml_node"))
+#
+# })
 
 
 # 04 - procesar_datos_huevo_valores_actuales -------------------------------------------------
@@ -95,7 +98,6 @@ testthat::test_that("procesar_datos_huevo_valores_actuales",{
   source(here::here("R","leer_configuracion.R"))
   source(here::here("R","get_datos_recursos_ave_huevos_func.R"))
   source(here::here("R","get_raw_web_file.R"))
-  source(here::here("R","leer_datos_ave_huevos_crudos_func.R"))
   source(here::here("R","procesar_datos_ave_huevos_valores_actuales_func.R"))
   source(here::here("R","extract_capia_tables.R"))
 
@@ -105,11 +107,11 @@ testthat::test_that("procesar_datos_huevo_valores_actuales",{
   get_datos_raw <- get_datos_recursos_ave_huevos_func(leer_configuracion_scrap)
   # ----------------------------
 
-  leer_datos <- leer_datos_ave_huevos_crudos_func(get_datos_raw)
+  # leer_datos <- leer_datos_ave_huevos_crudos_func(get_datos_raw)
 
   # ----------------------------
 
-  procesar_datos <- procesar_datos_ave_huevos_valores_actuales_func(leer_datos)
+  procesar_datos <- procesar_datos_ave_huevos_valores_actuales_func(get_datos_raw)
 
 
   testthat::expect_type(procesar_datos,type = "list")
@@ -132,7 +134,7 @@ testthat::test_that("transformar_datos_huevo_valores_actuales",{
   source(here::here("R","leer_configuracion.R"))
   source(here::here("R","get_datos_recursos_ave_huevos_func.R"))
   source(here::here("R","get_raw_web_file.R"))
-  source(here::here("R","leer_datos_ave_huevos_crudos_func.R"))
+  # source(here::here("R","leer_datos_ave_huevos_crudos_func.R"))
   source(here::here("R","procesar_datos_ave_huevos_valores_actuales_func.R"))
   source(here::here("R","extract_capia_tables.R"))
   source(here::here("R","transformar_datos_carne_ave_valores_actuales_func.R"))
@@ -145,11 +147,11 @@ testthat::test_that("transformar_datos_huevo_valores_actuales",{
 
   # ----------------------------
 
-  leer_datos <- leer_datos_ave_huevos_crudos_func(raw_datos)
+  # leer_datos <- leer_datos_ave_huevos_crudos_func(raw_datos)
 
   # ----------------------------
 
-  porcesados_datos <- procesar_datos_ave_huevos_valores_actuales_func(leer_datos)
+  porcesados_datos <- procesar_datos_ave_huevos_valores_actuales_func(raw_datos)
 
   # ----------------------------
 
@@ -172,7 +174,7 @@ testthat::test_that("almacenar_datos_carne_ave_valores_actuales_func",{
   source(here::here("R","leer_configuracion.R"))
   source(here::here("R","get_datos_recursos_ave_huevos_func.R"))
   source(here::here("R","get_raw_web_file.R"))
-  source(here::here("R","leer_datos_ave_huevos_crudos_func.R"))
+  # source(here::here("R","leer_datos_ave_huevos_crudos_func.R"))
   source(here::here("R","procesar_datos_ave_huevos_valores_actuales_func.R"))
   source(here::here("R","extract_capia_tables.R"))
   source(here::here("R","transformar_datos_carne_ave_valores_actuales_func.R"))
@@ -186,11 +188,11 @@ testthat::test_that("almacenar_datos_carne_ave_valores_actuales_func",{
 
   # ----------------------------
 
-  leer_datos <- leer_datos_ave_huevos_crudos_func(raw_datos)
+  # leer_datos <- leer_datos_ave_huevos_crudos_func(raw_datos)
 
   # ----------------------------
 
-  porcesados_datos <- procesar_datos_ave_huevos_valores_actuales_func(leer_datos)
+  porcesados_datos <- procesar_datos_ave_huevos_valores_actuales_func(raw_datos)
 
   # ----------------------------
 
@@ -227,7 +229,7 @@ testthat::test_that("disponibilizar_datos_carne_ave_valores_actuales_func",{
   source(here::here("R","leer_configuracion.R"))
   source(here::here("R","get_datos_recursos_ave_huevos_func.R"))
   source(here::here("R","get_raw_web_file.R"))
-  source(here::here("R","leer_datos_ave_huevos_crudos_func.R"))
+  # source(here::here("R","leer_datos_ave_huevos_crudos_func.R"))
   source(here::here("R","procesar_datos_ave_huevos_valores_actuales_func.R"))
   source(here::here("R","extract_capia_tables.R"))
   source(here::here("R","transformar_datos_carne_ave_valores_actuales_func.R"))
@@ -244,11 +246,11 @@ testthat::test_that("disponibilizar_datos_carne_ave_valores_actuales_func",{
 
   # ----------------------------
 
-  leer_datos <- leer_datos_ave_huevos_crudos_func(raw_datos)
+  # leer_datos <- leer_datos_ave_huevos_crudos_func(raw_datos)
 
   # ----------------------------
 
-  porcesados_datos <- procesar_datos_ave_huevos_valores_actuales_func(leer_datos)
+  porcesados_datos <- procesar_datos_ave_huevos_valores_actuales_func(raw_datos)
 
   # ----------------------------
 
@@ -283,7 +285,7 @@ testthat::test_that("validar_disponible_datos_carne_ave_valores_actuales_func",{
   source(here::here("R","leer_configuracion.R"))
   source(here::here("R","get_datos_recursos_ave_huevos_func.R"))
   source(here::here("R","get_raw_web_file.R"))
-  source(here::here("R","leer_datos_ave_huevos_crudos_func.R"))
+  # source(here::here("R","leer_datos_ave_huevos_crudos_func.R"))
   source(here::here("R","procesar_datos_ave_huevos_valores_actuales_func.R"))
   source(here::here("R","extract_capia_tables.R"))
   source(here::here("R","transformar_datos_carne_ave_valores_actuales_func.R"))
@@ -301,11 +303,11 @@ testthat::test_that("validar_disponible_datos_carne_ave_valores_actuales_func",{
 
   # ----------------------------
 
-  leer_datos <- leer_datos_ave_huevos_crudos_func(raw_datos)
+  # leer_datos <- leer_datos_ave_huevos_crudos_func(raw_datos)
 
   # ----------------------------
 
-  porcesados_datos <- procesar_datos_ave_huevos_valores_actuales_func(leer_datos)
+  porcesados_datos <- procesar_datos_ave_huevos_valores_actuales_func(raw_datos)
 
   # ----------------------------
 

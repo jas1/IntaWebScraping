@@ -57,35 +57,37 @@ testthat::test_that("get_datos_precipitaciones_func",{
   leer_configuracion_scrap <- leer_configuracion()
 
   # ----------------------------
-  get_datos_raw <- get_datos_precipitaciones_func(leer_configuracion_scrap)
+  raw_datos <- get_datos_precipitaciones_func(leer_configuracion_scrap)
 
 
-  testthat::expect_true(file.exists(get_datos_raw))
+  testthat::expect_true(file.exists(raw_datos))
 })
 
 # 03 - leer_datos_precipitaciones_crudos -------------------------------------------------
 # leer_datos_huevo_crudos <- leer_datos_precipitaciones_crudos_func(obtener_datos_recursos_huevo)
-
-testthat::test_that("leer_datos_precipitaciones_crudos_func",{
-  #Sys.setenv(R_CONFIG_ACTIVE = "default")
-  source(here::here("R","leer_configuracion.R"))
-  source(here::here("R","get_datos_precipitaciones_func.R"))
-  source(here::here("R","get_raw_web_file.R"))
-  source(here::here("R","leer_datos_precipitaciones_crudos_func.R"))
-
-  leer_configuracion_scrap <- leer_configuracion()
-
-  # ----------------------------
-  get_datos_raw <- get_datos_precipitaciones_func(leer_configuracion_scrap)
-  # ----------------------------
-
-  leer_datos <- leer_datos_precipitaciones_crudos_func(get_datos_raw)
-
-
-  testthat::expect_type(leer_datos,type = "list")
-  testthat::expect_equal(class(leer_datos),expected = c("xml_document","xml_node"))
-
-})
+# funciona en el test, pero cuando se corre en targets no se puede separar la parte de xml
+# asi tira el error de Last error: external pointer is not valid
+# asi quito la tarea de leer, y la incluyo en la siguiente de procesar.
+# testthat::test_that("leer_datos_precipitaciones_crudos_func",{
+#   #Sys.setenv(R_CONFIG_ACTIVE = "default")
+#   source(here::here("R","leer_configuracion.R"))
+#   source(here::here("R","get_datos_precipitaciones_func.R"))
+#   source(here::here("R","get_raw_web_file.R"))
+#
+#
+#   leer_configuracion_scrap <- leer_configuracion()
+#
+#   # ----------------------------
+#   raw_datos <- get_datos_precipitaciones_func(leer_configuracion_scrap)
+#   # ----------------------------
+#
+#
+#
+#
+#   testthat::expect_type(leer_datos,type = "list")
+#   testthat::expect_equal(class(leer_datos),expected = c("xml_document","xml_node"))
+#
+# })
 
 
 # 04 - procesar_datos_precipitaciones_valores_actuales_func -------------------------------------------------
@@ -95,7 +97,7 @@ testthat::test_that("procesar_datos_precipitaciones_valores_actuales",{
   source(here::here("R","leer_configuracion.R"))
   source(here::here("R","get_datos_precipitaciones_func.R"))
   source(here::here("R","get_raw_web_file.R"))
-  source(here::here("R","leer_datos_precipitaciones_crudos_func.R"))
+
   source(here::here("R","procesar_datos_precipitaciones_valores_actuales_func.R"))
   source(here::here("R","extract_precipitaciones_table.R"))
   source(here::here("R","extract_precipitaciones_table_identificar_tablas.R"))
@@ -103,14 +105,14 @@ testthat::test_that("procesar_datos_precipitaciones_valores_actuales",{
   leer_configuracion_scrap <- leer_configuracion()
 
   # ----------------------------
-  get_datos_raw <- get_datos_precipitaciones_func(leer_configuracion_scrap)
+  raw_datos <- get_datos_precipitaciones_func(leer_configuracion_scrap)
   # ----------------------------
 
-  leer_datos <- leer_datos_precipitaciones_crudos_func(get_datos_raw)
+
 
   # ----------------------------
 
-  procesar_datos <- procesar_datos_precipitaciones_valores_actuales_func(leer_datos)
+  procesar_datos <- procesar_datos_precipitaciones_valores_actuales_func(raw_datos)
 
 
   testthat::expect_type(procesar_datos,type = "list")
@@ -133,7 +135,7 @@ testthat::test_that("transformar_datos_precipitaciones_valores_actuales",{
   source(here::here("R","leer_configuracion.R"))
   source(here::here("R","get_datos_precipitaciones_func.R"))
   source(here::here("R","get_raw_web_file.R"))
-  source(here::here("R","leer_datos_precipitaciones_crudos_func.R"))
+
   source(here::here("R","procesar_datos_precipitaciones_valores_actuales_func.R"))
   source(here::here("R","auth_google_sheets.R"))
   source(here::here("R","get_deptos_distritos_map.R"))
@@ -150,15 +152,15 @@ testthat::test_that("transformar_datos_precipitaciones_valores_actuales",{
 
   # ----------------------------
 
-  leer_datos <- leer_datos_precipitaciones_crudos_func(raw_datos)
+
 
   # ----------------------------
 
-  porcesados_datos <- procesar_datos_precipitaciones_valores_actuales_func(leer_datos)
+  procesar_datos <- procesar_datos_precipitaciones_valores_actuales_func(raw_datos)
 
   # ----------------------------
   deptos_distritos_map <- get_deptos_distritos_map(leer_configuracion_scrap)
-  transform_datos <- transformar_datos_precipitaciones_valores_actuales_func(porcesados_datos,deptos_distritos_map)
+  transform_datos <- transformar_datos_precipitaciones_valores_actuales_func(procesar_datos,deptos_distritos_map)
 
   cols_expected <- c('indices_tabla','estacion','departamento','indices_fecha','valores_tabla','variable','origen','actualizado_fecha','distrito')
   cols_df <- colnames(transform_datos)
@@ -179,7 +181,7 @@ testthat::test_that("almacenar_datos_precipitaciones_valores_actuales_func",{
   source(here::here("R","leer_configuracion.R"))
   source(here::here("R","get_datos_precipitaciones_func.R"))
   source(here::here("R","get_raw_web_file.R"))
-  source(here::here("R","leer_datos_precipitaciones_crudos_func.R"))
+
   source(here::here("R","procesar_datos_precipitaciones_valores_actuales_func.R"))
   source(here::here("R","auth_google_sheets.R"))
   source(here::here("R","get_deptos_distritos_map.R"))
@@ -193,16 +195,16 @@ testthat::test_that("almacenar_datos_precipitaciones_valores_actuales_func",{
 
   # ----------------------------
 
-  leer_datos <- leer_datos_precipitaciones_crudos_func(raw_datos)
+
 
   # ----------------------------
 
-  porcesados_datos <- procesar_datos_precipitaciones_valores_actuales_func(leer_datos)
+  procesar_datos <- procesar_datos_precipitaciones_valores_actuales_func(raw_datos)
 
   # ----------------------------
   deptos_distritos_map <- get_deptos_distritos_map(leer_configuracion_scrap)
 
-  transform_datos <- transformar_datos_precipitaciones_valores_actuales_func(porcesados_datos,deptos_distritos_map)
+  transform_datos <- transformar_datos_precipitaciones_valores_actuales_func(procesar_datos,deptos_distritos_map)
   # ----------------------------
   resultado_almacenar_path <- almacenar_datos_precipitaciones_valores_actuales_func(transform_datos,leer_configuracion_scrap)
 
@@ -236,7 +238,7 @@ testthat::test_that("almacenar_datos_precipitaciones_valores_actuales_func",{
   source(here::here("R","leer_configuracion.R"))
   source(here::here("R","get_datos_precipitaciones_func.R"))
   source(here::here("R","get_raw_web_file.R"))
-  source(here::here("R","leer_datos_precipitaciones_crudos_func.R"))
+
   source(here::here("R","procesar_datos_precipitaciones_valores_actuales_func.R"))
   source(here::here("R","extract_capia_tables.R"))
   source(here::here("R","transformar_datos_precipitaciones_valores_actuales_func.R"))
@@ -252,17 +254,17 @@ testthat::test_that("almacenar_datos_precipitaciones_valores_actuales_func",{
 
   # ----------------------------
 
-  leer_datos <- leer_datos_precipitaciones_crudos_func(raw_datos)
+
 
   # ----------------------------
 
-  porcesados_datos <- procesar_datos_precipitaciones_valores_actuales_func(leer_datos)
+  procesar_datos <- procesar_datos_precipitaciones_valores_actuales_func(raw_datos)
 
   # ----------------------------
 
   deptos_distritos_map <- get_deptos_distritos_map(leer_configuracion_scrap)
 
-  transform_datos <- transformar_datos_precipitaciones_valores_actuales_func(porcesados_datos,deptos_distritos_map)
+  transform_datos <- transformar_datos_precipitaciones_valores_actuales_func(procesar_datos,deptos_distritos_map)
 
   # ----------------------------
   resultado_almacenar_path <- almacenar_datos_precipitaciones_valores_actuales_func(transform_datos,leer_configuracion_scrap)
@@ -294,7 +296,7 @@ testthat::test_that("validar_disponible_datos_precipitaciones_valores_actuales_f
   source(here::here("R","leer_configuracion.R"))
   source(here::here("R","get_datos_precipitaciones_func.R"))
   source(here::here("R","get_raw_web_file.R"))
-  source(here::here("R","leer_datos_precipitaciones_crudos_func.R"))
+
   source(here::here("R","procesar_datos_precipitaciones_valores_actuales_func.R"))
   source(here::here("R","extract_capia_tables.R"))
   source(here::here("R","transformar_datos_precipitaciones_valores_actuales_func.R"))
@@ -312,17 +314,17 @@ testthat::test_that("validar_disponible_datos_precipitaciones_valores_actuales_f
 
   # ----------------------------
 
-  leer_datos <- leer_datos_precipitaciones_crudos_func(raw_datos)
+
 
   # ----------------------------
 
-  porcesados_datos <- procesar_datos_precipitaciones_valores_actuales_func(leer_datos)
+  procesar_datos <- procesar_datos_precipitaciones_valores_actuales_func(raw_datos)
 
   # ----------------------------
 
   deptos_distritos_map <- get_deptos_distritos_map(leer_configuracion_scrap)
 
-  transform_datos <- transformar_datos_precipitaciones_valores_actuales_func(porcesados_datos,deptos_distritos_map)
+  transform_datos <- transformar_datos_precipitaciones_valores_actuales_func(procesar_datos,deptos_distritos_map)
 
   # ----------------------------
   resultado_almacenar_path <- almacenar_datos_precipitaciones_valores_actuales_func(transform_datos,leer_configuracion_scrap)

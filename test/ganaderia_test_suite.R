@@ -14,8 +14,8 @@ testthat::test_that("leer_configuracion_scrap",{
 
   # scrap_recursos_ganaderia_url:"https://www.rosgan.com.ar/precios-rosgan/"
   testthat::expect_equal(leer_configuracion_scrap[["scrap_recursos_ganaderia_url"]],expected = "https://www.rosgan.com.ar/precios-rosgan/")
-  # scrap_recursos_ganaderia_dest_file_pattern:"{timestamp_webscrap}_precios_rosgan.html"
-  testthat::expect_equal(leer_configuracion_scrap[["scrap_recursos_ganaderia_dest_file_pattern"]],expected = "{timestamp_webscrap}_precios_rosgan.html")
+  # scrap_recursos_ganaderia_dest_file_pattern:"{timestamp_webscrap}_precios_ganaderia_tambo.html"
+  testthat::expect_equal(leer_configuracion_scrap[["scrap_recursos_ganaderia_dest_file_pattern"]],expected = "{timestamp_webscrap}_precios_ganaderia_tambo.html")
   # scrap_raw_store_ganaderia_folder:"tmp/ganaderia"
   testthat::expect_equal(leer_configuracion_scrap[["scrap_raw_store_ganaderia_folder"]],expected = "tmp/raw/ganaderia")
   # scrap_timestamp_format:"%Y%m%d"
@@ -43,8 +43,8 @@ testthat::test_that("validar_configuracion",{
 
   # scrap_recursos_ganaderia_url:"https://www.rosgan.com.ar/precios-rosgan/"
   testthat::expect_equal(config_valida[["scrap_recursos_ganaderia_url"]],expected = "https://www.rosgan.com.ar/precios-rosgan/")
-  # scrap_recursos_ganaderia_dest_file_pattern:"{timestamp_webscrap}_precios_rosgan.html"
-  testthat::expect_equal(config_valida[["scrap_recursos_ganaderia_dest_file_pattern"]],expected = "{timestamp_webscrap}_precios_rosgan.html")
+  # scrap_recursos_ganaderia_dest_file_pattern:"{timestamp_webscrap}_precios_ganaderia_tambo.html"
+  testthat::expect_equal(config_valida[["scrap_recursos_ganaderia_dest_file_pattern"]],expected = "{timestamp_webscrap}_precios_ganaderia_tambo.html")
   # scrap_raw_store_ganaderia_folder:"tmp/ganaderia"
   testthat::expect_equal(config_valida[["scrap_raw_store_ganaderia_folder"]],expected = "tmp/raw/ganaderia")
   # scrap_timestamp_format:"%Y%m%d"
@@ -76,29 +76,32 @@ testthat::test_that("obtener_datos_recursos_ganaderia",{
 })
 
 # 03 - leer_datos_ganaderia_crudos -------------------------------------------------
-# leer_datos_ganaderia_crudos <- leer_datos_ganaderia_crudos_func(obtener_datos_recursos_ganaderia)
-
-testthat::test_that("leer_datos_ganaderia_crudos",{
-  #Sys.setenv(R_CONFIG_ACTIVE = "default")
-  source(here::here("R","leer_configuracion.R"))
-  source(here::here("R","get_datos_recursos_ganaderia_func.R"))
-  source(here::here("R","get_raw_web_file.R"))
-  source(here::here("R","leer_datos_ganaderia_crudos_func.R"))
-
-  leer_configuracion_scrap <- leer_configuracion()
-
-  # ----------------------------
-  obtener_datos_recursos_ganaderia <- get_datos_recursos_ganaderia_func(leer_configuracion_scrap)
-  testthat::expect_true(file.exists(obtener_datos_recursos_ganaderia))
-  # ----------------------------
-
-  leer_datos_ganaderia_crudos <- leer_datos_ganaderia_crudos_func(obtener_datos_recursos_ganaderia)
-  leer_datos_ganaderia_crudos
-
-  testthat::expect_type(leer_datos_ganaderia_crudos,type = "list")
-  testthat::expect_equal(class(leer_datos_ganaderia_crudos),expected = c("xml_document","xml_node"))
-
-})
+# funciona en el test, pero cuando se corre en targets no se puede separar la parte de xml
+# asi tira el error de Last error: external pointer is not valid
+# asi quito la tarea de leer, y la incluyo en la siguiente de procesar.
+#
+#
+# testthat::test_that("leer_datos_ganaderia_crudos",{
+#   #Sys.setenv(R_CONFIG_ACTIVE = "default")
+#   source(here::here("R","leer_configuracion.R"))
+#   source(here::here("R","get_datos_recursos_ganaderia_func.R"))
+#   source(here::here("R","get_raw_web_file.R"))
+#
+#
+#   leer_configuracion_scrap <- leer_configuracion()
+#
+#   # ----------------------------
+#   obtener_datos_recursos_ganaderia <- get_datos_recursos_ganaderia_func(leer_configuracion_scrap)
+#   testthat::expect_true(file.exists(obtener_datos_recursos_ganaderia))
+#   # ----------------------------
+#
+#
+#   leer_datos_ganaderia_crudos
+#
+#   testthat::expect_type(leer_datos_ganaderia_crudos,type = "list")
+#   testthat::expect_equal(class(leer_datos_ganaderia_crudos),expected = c("xml_document","xml_node"))
+#
+# })
 
 
 # 04 - procesar_datos_ganaderia_valores_actuales -------------------------------------------------
@@ -108,7 +111,7 @@ testthat::test_that("procesar_datos_ganaderia_valores_actuales",{
   source(here::here("R","leer_configuracion.R"))
   source(here::here("R","get_datos_recursos_ganaderia_func.R"))
   source(here::here("R","get_raw_web_file.R"))
-  source(here::here("R","leer_datos_ganaderia_crudos_func.R"))
+
   source(here::here("R","procesar_datos_ganaderia_valores_actuales_func.R"))
   source(here::here("R","extract_rosgan_updated_header.R"))
 
@@ -119,11 +122,11 @@ testthat::test_that("procesar_datos_ganaderia_valores_actuales",{
   testthat::expect_true(file.exists(obtener_datos_recursos_ganaderia))
   # ----------------------------
 
-  leer_datos_ganaderia_crudos <- leer_datos_ganaderia_crudos_func(obtener_datos_recursos_ganaderia)
+
 
   # ----------------------------
 
-  procesar_datos_ganaderia_valores_actuales <- procesar_datos_ganaderia_valores_actuales_func(leer_datos_ganaderia_crudos)
+  procesar_datos_ganaderia_valores_actuales <- procesar_datos_ganaderia_valores_actuales_func(obtener_datos_recursos_ganaderia)
   procesar_datos_ganaderia_valores_actuales
 
   testthat::expect_type(procesar_datos_ganaderia_valores_actuales,type = "list")
@@ -146,7 +149,7 @@ testthat::test_that("transformar_datos_ganaderia_valores_actuales",{
   source(here::here("R","leer_configuracion.R"))
   source(here::here("R","get_datos_recursos_ganaderia_func.R"))
   source(here::here("R","get_raw_web_file.R"))
-  source(here::here("R","leer_datos_ganaderia_crudos_func.R"))
+
   source(here::here("R","procesar_datos_ganaderia_valores_actuales_func.R"))
   source(here::here("R","extract_rosgan_updated_header.R"))
   source(here::here("R","parse_fecha.R"))
@@ -164,11 +167,11 @@ testthat::test_that("transformar_datos_ganaderia_valores_actuales",{
   testthat::expect_true(file.exists(obtener_datos_recursos_ganaderia))
   # ----------------------------
 
-  leer_datos_ganaderia_crudos <- leer_datos_ganaderia_crudos_func(obtener_datos_recursos_ganaderia)
+
 
   # ----------------------------
 
-  procesar_datos_ganaderia_valores_actuales <- procesar_datos_ganaderia_valores_actuales_func(leer_datos_ganaderia_crudos)
+  procesar_datos_ganaderia_valores_actuales <- procesar_datos_ganaderia_valores_actuales_func(obtener_datos_recursos_ganaderia)
 
   # ----------------------------
 
@@ -190,7 +193,7 @@ testthat::test_that("transformar_datos_tambo_valores_actuales_func",{
   source(here::here("R","leer_configuracion.R"))
   source(here::here("R","get_datos_recursos_ganaderia_func.R"))
   source(here::here("R","get_raw_web_file.R"))
-  source(here::here("R","leer_datos_ganaderia_crudos_func.R"))
+
   source(here::here("R","procesar_datos_ganaderia_valores_actuales_func.R"))
   source(here::here("R","extract_rosgan_updated_header.R"))
   source(here::here("R","parse_fecha.R"))
@@ -208,11 +211,11 @@ testthat::test_that("transformar_datos_tambo_valores_actuales_func",{
   testthat::expect_true(file.exists(obtener_datos_recursos_ganaderia))
   # ----------------------------
 
-  leer_datos_ganaderia_crudos <- leer_datos_ganaderia_crudos_func(obtener_datos_recursos_ganaderia)
+
 
   # ----------------------------
 
-  procesar_datos_ganaderia_valores_actuales <- procesar_datos_ganaderia_valores_actuales_func(leer_datos_ganaderia_crudos)
+  procesar_datos_ganaderia_valores_actuales <- procesar_datos_ganaderia_valores_actuales_func(obtener_datos_recursos_ganaderia)
 
   # ----------------------------
 
@@ -234,7 +237,7 @@ testthat::test_that("almacenar_datos_ganaderia_valores_actuales_func",{
   source(here::here("R","leer_configuracion.R"))
   source(here::here("R","get_datos_recursos_ganaderia_func.R"))
   source(here::here("R","get_raw_web_file.R"))
-  source(here::here("R","leer_datos_ganaderia_crudos_func.R"))
+
   source(here::here("R","procesar_datos_ganaderia_valores_actuales_func.R"))
   source(here::here("R","extract_rosgan_updated_header.R"))
   source(here::here("R","parse_fecha.R"))
@@ -253,11 +256,11 @@ testthat::test_that("almacenar_datos_ganaderia_valores_actuales_func",{
   testthat::expect_true(file.exists(obtener_datos_recursos_ganaderia))
   # ----------------------------
 
-  leer_datos_ganaderia_crudos <- leer_datos_ganaderia_crudos_func(obtener_datos_recursos_ganaderia)
+
 
   # ----------------------------
 
-  procesar_datos_ganaderia_valores_actuales <- procesar_datos_ganaderia_valores_actuales_func(leer_datos_ganaderia_crudos)
+  procesar_datos_ganaderia_valores_actuales <- procesar_datos_ganaderia_valores_actuales_func(obtener_datos_recursos_ganaderia)
 
   # ----------------------------
 
@@ -295,7 +298,7 @@ testthat::test_that("almacenar_datos_tambo_valores_actuales_func",{
   source(here::here("R","leer_configuracion.R"))
   source(here::here("R","get_datos_recursos_ganaderia_func.R"))
   source(here::here("R","get_raw_web_file.R"))
-  source(here::here("R","leer_datos_ganaderia_crudos_func.R"))
+
   source(here::here("R","procesar_datos_ganaderia_valores_actuales_func.R"))
   source(here::here("R","extract_rosgan_updated_header.R"))
   source(here::here("R","parse_fecha.R"))
@@ -314,11 +317,11 @@ testthat::test_that("almacenar_datos_tambo_valores_actuales_func",{
   testthat::expect_true(file.exists(obtener_datos_recursos_ganaderia))
   # ----------------------------
 
-  leer_datos_ganaderia_crudos <- leer_datos_ganaderia_crudos_func(obtener_datos_recursos_ganaderia)
+
 
   # ----------------------------
 
-  procesar_datos_ganaderia_valores_actuales <- procesar_datos_ganaderia_valores_actuales_func(leer_datos_ganaderia_crudos)
+  procesar_datos_ganaderia_valores_actuales <- procesar_datos_ganaderia_valores_actuales_func(obtener_datos_recursos_ganaderia)
 
   # ----------------------------
 
@@ -355,7 +358,7 @@ testthat::test_that("disponibilizar_datos_ganaderia_valores_actuales",{
   source(here::here("R","leer_configuracion.R"))
   source(here::here("R","get_datos_recursos_ganaderia_func.R"))
   source(here::here("R","get_raw_web_file.R"))
-  source(here::here("R","leer_datos_ganaderia_crudos_func.R"))
+
   source(here::here("R","procesar_datos_ganaderia_valores_actuales_func.R"))
   source(here::here("R","extract_rosgan_updated_header.R"))
   source(here::here("R","parse_fecha.R"))
@@ -377,11 +380,11 @@ testthat::test_that("disponibilizar_datos_ganaderia_valores_actuales",{
   testthat::expect_true(file.exists(obtener_datos_recursos_ganaderia))
   # ----------------------------
 
-  leer_datos_ganaderia_crudos <- leer_datos_ganaderia_crudos_func(obtener_datos_recursos_ganaderia)
+
 
   # ----------------------------
 
-  procesar_datos_ganaderia_valores_actuales <- procesar_datos_ganaderia_valores_actuales_func(leer_datos_ganaderia_crudos)
+  procesar_datos_ganaderia_valores_actuales <- procesar_datos_ganaderia_valores_actuales_func(obtener_datos_recursos_ganaderia)
 
   # ----------------------------
 
@@ -417,7 +420,7 @@ testthat::test_that("validar_disponible_datos_ganaderia_valores_actuales_func",{
   source(here::here("R","leer_configuracion.R"))
   source(here::here("R","get_datos_recursos_ganaderia_func.R"))
   source(here::here("R","get_raw_web_file.R"))
-  source(here::here("R","leer_datos_ganaderia_crudos_func.R"))
+
   source(here::here("R","procesar_datos_ganaderia_valores_actuales_func.R"))
   source(here::here("R","extract_rosgan_updated_header.R"))
   source(here::here("R","parse_fecha.R"))
@@ -439,11 +442,11 @@ testthat::test_that("validar_disponible_datos_ganaderia_valores_actuales_func",{
   testthat::expect_true(file.exists(obtener_datos_recursos_ganaderia))
   # ----------------------------
 
-  leer_datos_ganaderia_crudos <- leer_datos_ganaderia_crudos_func(obtener_datos_recursos_ganaderia)
+
 
   # ----------------------------
 
-  procesar_datos_ganaderia_valores_actuales <- procesar_datos_ganaderia_valores_actuales_func(leer_datos_ganaderia_crudos)
+  procesar_datos_ganaderia_valores_actuales <- procesar_datos_ganaderia_valores_actuales_func(obtener_datos_recursos_ganaderia)
 
   # ----------------------------
 
@@ -480,7 +483,7 @@ testthat::test_that("validar_disponible_datos_ganaderia_valores_actuales_func",{
   source(here::here("R","leer_configuracion.R"))
   source(here::here("R","get_datos_recursos_ganaderia_func.R"))
   source(here::here("R","get_raw_web_file.R"))
-  source(here::here("R","leer_datos_ganaderia_crudos_func.R"))
+
   source(here::here("R","procesar_datos_ganaderia_valores_actuales_func.R"))
   source(here::here("R","extract_rosgan_updated_header.R"))
   source(here::here("R","parse_fecha.R"))
@@ -502,11 +505,11 @@ testthat::test_that("validar_disponible_datos_ganaderia_valores_actuales_func",{
   testthat::expect_true(file.exists(obtener_datos_recursos_ganaderia))
   # ----------------------------
 
-  leer_datos_ganaderia_crudos <- leer_datos_ganaderia_crudos_func(obtener_datos_recursos_ganaderia)
+
 
   # ----------------------------
 
-  procesar_datos_ganaderia_valores_actuales <- procesar_datos_ganaderia_valores_actuales_func(leer_datos_ganaderia_crudos)
+  procesar_datos_ganaderia_valores_actuales <- procesar_datos_ganaderia_valores_actuales_func(obtener_datos_recursos_ganaderia)
 
   # ----------------------------
 

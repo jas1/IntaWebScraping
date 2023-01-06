@@ -1,6 +1,7 @@
-extract_precipitaciones_table <- function(rvest_html_object){
+extract_precipitaciones_table <- function(raw_path_file){
   # devuelve: df: estacion,valor,departamento,descripcion_fecha
   # df:row:"Arroyo Barú,0 mm,Colón,Precipitaciones registradas hasta las 09:00hs del día 05/01/2023 (24 horas)"
+  rvest_html_object <- rvest::read_html(raw_path_file)
   pp_tables <- rvest_html_object |> rvest::html_elements("table")
   descripcion_fecha <- pp_tables[[2]] |>
     rvest::html_table() |>

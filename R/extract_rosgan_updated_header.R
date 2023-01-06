@@ -6,9 +6,9 @@
 #' @export
 #'
 #' @examples extract_rosgan_updated_header(dl_html_file="~/project/tmp/20221106_precios_rosgan.html")
-extract_rosgan_updated_header <- function(rvest_html_object){
+extract_rosgan_updated_header <- function(raw_file_path){
 
-  downloaded_file <- rvest_html_object
+  downloaded_file <- rvest::read_html(raw_file_path)
 
   pre_indices_fecha <- downloaded_file |>
     rvest::html_element(".caja-titulo-verde") |>

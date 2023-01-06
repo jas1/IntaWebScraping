@@ -6,12 +6,11 @@
 #' @export
 #'
 #' @examples extract_capia_tables(rvest_html_object=rvest::html("~/project/tmp/capia.html"))
-extract_capia_tables <- function(rvest_html_object){
+extract_capia_tables <- function(dl_html_file){
 
-  #downloaded_file <- rvest::read_html(dl_html_file)
-  downloaded_file <- rvest_html_object
+  downloaded_file <- rvest::read_html(dl_html_file)
 
-  obtener_tablas <- html_loaded|>
+  obtener_tablas <- downloaded_file|>
     # rvest::html_elements("#sp-main-body")
     rvest::html_elements(".post_intro table") |>
     rvest::html_table() |>

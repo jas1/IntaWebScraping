@@ -315,3 +315,9 @@ promedio_precipitacion_dias_depto_distrito_func(df_dias_result2)
 
 ```
 
+#  off topic: consola generar codigo para compilar todos los source
+```{r}
+list.files(here::here("R")) |> purrr::map(.f=function(x){ glue::glue('source(here::here("R","{x}"))')  }) |> paste0(collapse = "\n") |> cat()
+
+```
+

@@ -1,9 +1,10 @@
 library(targets)
 library(tarchetypes)
 
-source("R/functions.r")
+source("R/source_funciones.R")
+
 options(tidyverse.quiet = TRUE)
-targets::tar_option_set(packages = c("here","config","dplyr", "readr", "tidyr","rvest","googlesheets4"))
+targets::tar_option_set(packages = c("here","config","dplyr", "readr", "tidyr","httr","rvest","googlesheets4"))
 
 leer_configuracion
 list(
@@ -43,22 +44,22 @@ list(
   ),
   # 2. procesar los datos obtenidos: ganaderia: leer los datos crudos
   # devuelve el html
-  targets::tar_target(
-    leer_datos_ganaderia_crudos,
-    leer_datos_ganaderia_crudos_func(obtener_datos_recursos_ganaderia)
-  ),
+  # targets::tar_target(
+  #   leer_datos_ganaderia_crudos,
+  #   leer_datos_ganaderia_crudos_func(obtener_datos_recursos_ganaderia)
+  # ),
   # 2.a procesar los datos obtenidos: porcinos: leer los datos crudos
   # devuelve el html
-  targets::tar_target(
-    leer_datos_porcinos_crudos,
-    leer_datos_porcinos_crudos_func(obtener_datos_recursos_porcinos)
-  ),
+  # targets::tar_target(
+  #   leer_datos_porcinos_crudos,
+  #   leer_datos_porcinos_crudos_func(obtener_datos_recursos_porcinos)
+  # ),
   # 2.b procesar los datos obtenidos: porcinos: leer los datos crudos
   # devuelve el html
-  targets::tar_target(
-    leer_datos_ave_huevos_crudos,
-    leer_datos_ave_huevos_crudos_func(obtener_datos_recursos_ave_huevos)
-  ),
+  # targets::tar_target(
+  #   leer_datos_ave_huevos_crudos,
+  #   leer_datos_ave_huevos_crudos_func(obtener_datos_recursos_ave_huevos)
+  # ),
   # 2.c procesar los datos obtenidos: precipitaciones: leer los datos precipitaciones
   # devuelve el html
   targets::tar_target(
@@ -68,17 +69,17 @@ list(
   # 3. procesar los datos obtenidos: ganaderia: extraer los datos
   targets::tar_target(
     procesar_datos_ganaderia_valores_actuales,
-    procesar_datos_ganaderia_valores_actuales_func(leer_datos_ganaderia_crudos)
+    procesar_datos_ganaderia_valores_actuales_func(obtener_datos_recursos_ganaderia)
   ),
   # 3.a procesar los datos obtenidos: porcinos: extraer los datos
   targets::tar_target(
     procesar_datos_porcinos_valores_actuales,
-    procesar_datos_porcinos_valores_actuales_func(leer_datos_porcinos_crudos)
+    procesar_datos_porcinos_valores_actuales_func(obtener_datos_recursos_porcinos)
   ),
   # 3.b procesar los datos obtenidos: ave huevos: extraer los datos
   targets::tar_target(
     procesar_datos_ave_huevos_valores_actuales,
-    procesar_datos_ave_huevos_valores_actuales_func(leer_datos_ave_huevos_crudos)
+    procesar_datos_ave_huevos_valores_actuales_func(obtener_datos_recursos_ave_huevos)
   ),
   # 3.c.x mapeo
   targets::tar_target(
@@ -88,7 +89,7 @@ list(
   # 3.c procesar los datos obtenidos: precipitaciones: extraer los datos
   targets::tar_target(
     procesar_datos_precipitaciones_valores_actuales,
-    procesar_datos_precipitaciones_valores_actuales_func(leer_datos_precipitaciones_crudos)
+    procesar_datos_precipitaciones_valores_actuales_func(obtener_datos_recursos_precipitaciones)
   ),
   # 4. procesar los datos obtenidos: ganaderia: transformar los datos
   targets::tar_target(
@@ -209,7 +210,7 @@ list(
   targets::tar_target(
     validar_disponible_datos_precipitaciones_valores_actuales,
     validar_disponible_datos_precipitaciones_valores_actuales_func(almacenar_datos_precipitaciones_valores_actuales,disponibilizar_datos_precipitaciones_valores_actuales,config_valida)
-  ),
+  )
   # recordar que una web no tiene que procesar tiene que comer directamente lo mas posible.
   # todo lo que dependa de predios , va a estar agarrado de la app.
   # que son los predios pre cargados

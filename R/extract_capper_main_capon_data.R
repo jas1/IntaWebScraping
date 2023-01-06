@@ -6,21 +6,21 @@
 #' @export
 #'
 #' @examples extract_capper_main_capon_data(dl_html_file="~/project/tmp/20221106_precios_rosgan.html")
-extract_capper_main_capon_data <- function(rvest_html_object){
+extract_capper_main_capon_data <- function(raw_file_path){
 
-  downloaded_file <- rvest_html_object
+  downloaded_file <- rvest::read_html(raw_file_path)
 
-  pizarra_precios_h3 <- rvest::read_html(output_dl_file) |>
+  pizarra_precios_h3 <- downloaded_file |>
     rvest::html_elements("#cpe_pizarra_de_precios-2 h3") |>
     rvest::html_text()
 
-  precio_maximo_capon_tag <- rvest::read_html(output_dl_file) |>
+  precio_maximo_capon_tag <- downloaded_file |>
     rvest::html_elements("#cpe_pizarra_de_precios-2") |>
     rvest::html_elements(".cpe-row") |>
     rvest::html_elements(".cpe-featured-name") |>
     rvest::html_text()
 
-  precio_maximo_capon_precio <- rvest::read_html(output_dl_file) |>
+  precio_maximo_capon_precio <-downloaded_file |>
     rvest::html_elements("#cpe_pizarra_de_precios-2") |>
     rvest::html_elements(".cpe-row") |>
     rvest::html_elements(".cpe-number") |>

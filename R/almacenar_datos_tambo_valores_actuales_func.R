@@ -10,6 +10,7 @@ almacenar_datos_tambo_valores_actuales_func <- function(transformar_datos_tambo_
     readr::write_tsv(x = transformar_datos_tambo_valores_actuales,file = output_file_path)
   }else{
     print(glue::glue("almacenar_datos_tambo_valores_actuales_func: archivo reemplazado : {output_file_path}") )
+    readr::write_tsv(x = transformacion_df,file = output_file_path)
   }
 
   output_file_path

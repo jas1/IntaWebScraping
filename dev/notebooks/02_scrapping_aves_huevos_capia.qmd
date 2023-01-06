@@ -1,0 +1,108 @@
+# objetivo
+
+analisis exploratorio de scraping de la pagina de capia 
+
+# detalle
+
+de la pagina de capepr > https://www.capia.com.ar/estadisticas/precio-del-huevo-semanal
+
+obtenemos categorias de : huevo y carne de ave
+
+# huevo
+cantidad: cantidad gallinas =-3273+(77,722*tinglado)+(19276*automático)
+precio: Precio polla recriada blanca 16 semanas 
+parecen ser posts con talbas semanales de esas tablas hay que extraer las que digan "Precio polla recriada blanca 16 semanas"
+
+
+# carne de ave
+cantidad: 65,16*tinglado
+precio: Precio polla recriada blanca  18 meses https://www.capia.com.ar/estadisticas/precio-del-huevo-semana
+parecen ser posts con talbas semanales de esas tablas hay que extraer las que digan "Precio polla recriada blanca  18 meses"
+
+
+
+## ejemplo scrapping huevo
+
+no navega, buscando otra alternativa
+
+```{r}
+source(here::here("R","get_raw_web_file.R" ))
+#install.packages("rvest")
+# periodicidad diaria , si dia no existe entonces bajar 
+library(rvest)
+
+
+
+web_page <- "https://www.capia.com.ar/estadisticas/precio-del-huevo-semanal"
+template_page_name <- "{timestamp_webscrap}_precios_ave_huevo_capia.html"
+output_path <- "tmp/raw/ave_huevo"
+
+output_dl_file <- get_raw_web_file(url_src = web_page,template_output = template_page_name,output_path = output_path,timestamp_format = "%Y%m%d")
+```
+
+# probando rcurl
+
+```{r}
+# super util para debuguear 
+# el error me di cuenta al comparar los headers de lo que es el browser en modo debugging VS 
+# el head devuelto aca. 
+# se veia que le pifie en la URL , era semanal sin la barra final y con una L 
+web_page <- "https://www.capia.com.ar/estadisticas/precio-del-huevo-semana/"
+
+httr::HEAD(web_page, httr::config(verbose = TRUE),httr::add_headers("user-agent" = "Mozilla/5.0"))
+```
+
+# si funcionara el html 
+```{r}
+html_loaded <- rvest::read_html(output_dl_file)
+```
+
+# revisando los header
+```{r}
+
+obtener_tablas <- html_loaded|>
+   # rvest::html_elements("#sp-main-body") 
+  rvest::html_elements(".post_intro table") |> 
+  rvest::html_table() |> 
+  purrr::map_dfr(.f=function(df_x){
+     ref_semana <- df_x |>
+       dplyr::filter(stringr::str_detect(stringr::str_to_upper(X1),"REFERENCIA SEMANA")) |>
+       dplyr::pull(X1)
+     
+     ref_huevo <- df_x |>
+       dplyr::filter(stringr::str_detect(stringr::str_to_lower(X1),"polla recriada de 16 semanas blanca")) |> 
+       dplyr::mutate(descripcion=paste0(X1," - " ,X2))|> 
+       dplyr::rename(precio=X3) |> 
+       dplyr::select(descripcion,precio) |> 
+       dplyr::mutate(fecha_semana=ref_semana)
+       
+     ref_carne_ave <- df_x |>
+       dplyr::filter(stringr::str_detect(stringr::str_to_lower(X1),"polla recriada de 18 semanas blanca")) |> 
+       dplyr::mutate(descripcion=paste0(X1," - " ,X2))|> 
+       dplyr::rename(precio=X3) |> 
+       dplyr::select(descripcion,precio)|> 
+       dplyr::mutate(fecha_semana=ref_semana)
+       
+     resu <- ref_huevo |> dplyr::union(ref_carne_ave)
+     resu
+  })
+
+obtener_tablas
+# 
+# obtener_tablas[[1]] |>
+#   dplyr::filter(stringr::str_detect(stringr::str_to_upper(X1),"REFERENCIA SEMANA"))
+# obtener_tablas[[1]] |> 
+#   dplyr::filter(stringr::str_detect(stringr::str_to_lower(X1),"polla recriada de 16 semanas blanca"))
+# 
+# obtener_tablas[[1]] |> 
+#   dplyr::filter(stringr::str_detect(stringr::str_to_lower(X1),"polla recriada de 18 semanas blanca"))
+# 
+# obtener_tablas <- html_loaded|>
+#    # rvest::html_elements("#sp-main-body") 
+#   rvest::html_elements(".post_intro table") 
+obtener_tablas |>  colnames()
+```
+
+
+## ejemplo scrapping historico
+

@@ -29,6 +29,12 @@ list(
     obtener_datos_recursos_porcinos,
     get_datos_recursos_porcinos_func(config_valida)
   ),
+  # 1.b obtener los datos crudos: ave huevos: bajar la pagina.
+  # devuelve el path del archivo generado
+  targets::tar_target(
+    obtener_datos_recursos_ave_huevos,
+    get_datos_recursos_ave_huevos_func(config_valida)
+  ),
   # 2. procesar los datos obtenidos: ganaderia: leer los datos crudos
   # devuelve el html
   targets::tar_target(
@@ -41,6 +47,13 @@ list(
     leer_datos_porcinos_crudos,
     leer_datos_porcinos_crudos_func(obtener_datos_recursos_porcinos)
   ),
+  # 2.b procesar los datos obtenidos: porcinos: leer los datos crudos
+  # devuelve el html
+  targets::tar_target(
+    leer_datos_ave_huevos_crudos,
+    leer_datos_ave_huevos_crudos_func(obtener_datos_recursos_ave_huevos)
+  ),
+
   # 3. procesar los datos obtenidos: ganaderia: extraer los datos
   targets::tar_target(
     procesar_datos_ganaderia_valores_actuales,
@@ -50,6 +63,11 @@ list(
   targets::tar_target(
     procesar_datos_porcinos_valores_actuales,
     procesar_datos_porcinos_valores_actuales_func(leer_datos_porcinos_crudos)
+  ),
+  # 3.b procesar los datos obtenidos: ave huevos: extraer los datos
+  targets::tar_target(
+    procesar_datos_ave_huevos_valores_actuales,
+    procesar_datos_ave_huevos_valores_actuales_func(leer_datos_ave_huevos_crudos)
   ),
   # 4. procesar los datos obtenidos: ganaderia: transformar los datos
   targets::tar_target(
@@ -66,6 +84,16 @@ list(
     transformar_datos_porcinos_valores_actuales,
     transformar_datos_porcinos_valores_actuales_func(procesar_datos_porcinos_valores_actuales)
   ),
+  # 4.c procesar los datos obtenidos: carne_ave: transformar los datos
+  targets::tar_target(
+    transformar_datos_carne_ave_valores_actuales,
+    transformar_datos_carne_ave_valores_actuales_func(procesar_datos_ave_huevos_valores_actuales)
+  ),
+  # 4.d procesar los datos obtenidos: carne_ave: transformar los datos
+  targets::tar_target(
+    transformar_datos_huevo_valores_actuales,
+    transformar_datos_huevo_valores_actuales_func(procesar_datos_ave_huevos_valores_actuales)
+  ),
   # 5. procesar los datos obtenidos: ganaderia: almacenar los datos
   targets::tar_target(
     almacenar_datos_ganaderia_valores_actuales,
@@ -81,6 +109,16 @@ list(
     almacenar_datos_porcinos_valores_actuales,
     almacenar_datos_porcinos_valores_actuales_func(transformar_datos_porcinos_valores_actuales,config_valida)
   ),
+  # 5.c procesar los datos obtenidos: carne_ave: almacenar los datos
+  targets::tar_target(
+    almacenar_datos_carne_ave_valores_actuales,
+    almacenar_datos_carne_ave_valores_actuales_func(transformar_datos_carne_ave_valores_actuales,config_valida)
+  ),
+  # 5.d procesar los datos obtenidos: huevo: almacenar los datos
+  targets::tar_target(
+    almacenar_datos_huevo_valores_actuales,
+    almacenar_datos_huevo_valores_actuales_func(transformar_datos_huevo_valores_actuales,config_valida)
+  ),
   # 6. disponibilizar los datos procesados
   targets::tar_target(
     disponibilizar_datos_ganaderia_valores_actuales,
@@ -94,7 +132,17 @@ list(
   # 6.b disponibilizar los datos procesados
   targets::tar_target(
     disponibilizar_datos_porcinos_valores_actuales,
-    disponibilizar_datos_porcinos_valores_actuales_func(almacenar_datos_porcinos_valores_actuales_func,config_valida)
+    disponibilizar_datos_porcinos_valores_actuales_func(almacenar_datos_porcinos_valores_actuales,config_valida)
+  ),
+  # 6.c disponibilizar los datos procesados
+  targets::tar_target(
+    disponibilizar_datos_carne_ave_valores_actuales,
+    disponibilizar_datos_carne_ave_valores_actuales_func(almacenar_datos_carne_ave_valores_actuales,config_valida)
+  ),
+  # 6.d disponibilizar los datos procesados
+  targets::tar_target(
+    disponibilizar_datos_huevo_valores_actuales,
+    disponibilizar_datos_huevo_valores_actuales_func(almacenar_datos_huevo_valores_actuales,config_valida)
   ),
   # 7. validar datos disponibilizados
   targets::tar_target(
@@ -109,7 +157,17 @@ list(
   # 7.b validar datos disponibilizados
   targets::tar_target(
     validar_disponible_datos_porcinos_valores_actuales,
-    validar_disponible_datos_porcinos_valores_actuales_func(almacenar_datos_porcinos_valores_actuales_func,disponibilizar_datos_porcinos_valores_actuales,config_valida)
+    validar_disponible_datos_porcinos_valores_actuales_func(almacenar_datos_porcinos_valores_actuales,disponibilizar_datos_porcinos_valores_actuales,config_valida)
+  ),
+  # 7.c validar datos disponibilizados
+  targets::tar_target(
+    validar_disponible_datos_huevo_valores_actuales,
+    validar_disponible_datos_huevo_valores_actuales_func(almacenar_datos_huevo_valores_actuales,disponibilizar_datos_huevo_valores_actuales,config_valida)
+  ),
+  # 7.d validar datos disponibilizados
+  targets::tar_target(
+    validar_disponible_datos_carne_ave_valores_actuales,
+    validar_disponible_datos_carne_ave_valores_actuales_func(almacenar_datos_carne_ave_valores_actuales,disponibilizar_datos_carne_ave_valores_actuales,config_valida)
   ),
   # repetir pasos para resto de recursos y lluvias
   # 3. pre process data

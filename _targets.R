@@ -210,13 +210,17 @@ list(
   targets::tar_target(
     validar_disponible_datos_precipitaciones_valores_actuales,
     validar_disponible_datos_precipitaciones_valores_actuales_func(almacenar_datos_precipitaciones_valores_actuales,disponibilizar_datos_precipitaciones_valores_actuales,config_valida)
-  )
+  ),
   # recordar que una web no tiene que procesar tiene que comer directamente lo mas posible.
   # todo lo que dependa de predios , va a estar agarrado de la app.
   # que son los predios pre cargados
   # puedo tratar de dejar todo eso pre calculado o solo actualizar el excel , eso a revisar.
 
-
+  #8 calculo final del webscrap recursos:
+  targets::tar_target(
+    valores_precios_webscrap_final,
+    valores_precios_webscrap_recursos_final_func(config_valida)
+  )
 
   # # 4. make histogram plot
   # targets::tar_target(hist, create_plot(data)),

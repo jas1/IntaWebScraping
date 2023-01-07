@@ -49,7 +49,29 @@ la idea es que la informacion se actualice sola en base a las diferentes paginas
 - foco en el scrap.
 - luego revisar el calculo y caer con una propuesta a validar por mati
 
+
+# cantidades: 
+
+output final web scrap: 
+porcinos: precio:  precio máximo capón
+carne_ave: precio: Precio polla recriada blanca  18 meses
+huevo: precio final: Precio polla recriada blanca 16 semanas
+tambo: precio final: precio "vaca con garantia de preñez"
+ganaderia: precio final: (precio "terneros/as"* *175)
+
+en la app pre procesamiento de predios: 
+
+ganaderia: cantidad: (120.8458*predio)-(0.3*potrero)
+tambo: cantidad: 1.56+13.45409*predio
+carne_ave: cantidad: 65,16*tinglado
+porcinos: cantidad: 1 capon 1.51  metros de perímetro de tinglado
+
+dudas: 
+
+huevo: cantidad: cantidad gallinas =-3273+(77,722*tinglado)+(19276*automático) ( automático ? )
+
 # consultas mati: 
 
 - como tomamos las precipitaciones: porque vienen en formato diario , deberia ser promedio agrupado entre N dias, entre n estaciones pertenecientes por distrito > si el promedio supera los 20 mm , entonces penalizacion.
 
+- tema cantidades de huevo, automatico ?? y esa variable de donde sale ???

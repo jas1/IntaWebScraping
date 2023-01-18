@@ -55,3 +55,5 @@ source(here::here("R","validar_disponible_datos_porcinos_valores_actuales_func.R
 source(here::here("R","validar_disponible_datos_precipitaciones_valores_actuales_func.R"))
 source(here::here("R","validar_disponible_datos_tambo_valores_actuales_func.R"))
 source(here::here("R","validar_url.R"))
+source(here::here("R","valores_precios_webscrap_recursos_final_func.R"))
+

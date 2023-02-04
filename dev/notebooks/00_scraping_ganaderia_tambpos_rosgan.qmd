@@ -109,3 +109,48 @@ remates_history <- extract_rosgan_history(output_dl_file)
 # consideracioens
 
 - en terneros/as no concide history con caja verde. puede que la caja verde diga un valor diario mientaras que history se quedo en una fecha 
+
+
+# VERIFICACIONES: 
+
+```{r}
+source(here::here("R","source_funciones.R"))
+
+obtener_datos_recursos_ganaderia <- here::here("tmp","raw","ganaderia","20230204_precios_ganaderia_tambo.html")
+obtener_datos_recursos_ganaderia_2 <- here::here("tmp","raw","ganaderia","20230106_precios_ganaderia_tambo.html")
+  
+procesar_datos_ganaderia_valores_actuales_2 <- procesar_datos_ganaderia_valores_actuales_func(obtener_datos_recursos_ganaderia_2)
+
+procesar_datos_ganaderia_valores_actuales <- procesar_datos_ganaderia_valores_actuales_func(obtener_datos_recursos_ganaderia)
+procesar_datos_ganaderia_valores_actuales
+
+----------------------------
+    ret <- procesar_datos_ganaderia_valores_actuales |>
+    dplyr::filter(stringr::str_detect(indices_tabla,"vacas c/gtía. de preñez")) |>
+    dplyr::mutate(indices_fecha=parse_fecha(indices_fecha_str)) |>
+    dplyr::mutate(actualizado_fecha=lubridate::today()) |>
+    dplyr::mutate(explotacion="tambo") |>
+    dplyr::select(indices_tabla,indices_fecha,valores_tabla,explotacion,origen,actualizado_fecha)
+  ret
+  
+#        14 de diciembre de 2023
+  parse_fecha("14 de diciembre de 2023")
+  # NO HAY VALOR DE GARANTIA PREÑEZ >>  nose debe actualizar tambo.
+  
+# error: 18 de enero de 2023	
+parse_fecha("18 de enero de 2023")
+  
+  
+transformar_datos_tambo_valores_actuales <- transformar_datos_tambo_valores_actuales_func(procesar_datos_ganaderia_valores_actuales)
+transformar_datos_tambo_valores_actuales
+
+transformar_datos_tambo_valores_actuales_2 <- transformar_datos_tambo_valores_actuales_func(procesar_datos_ganaderia_valores_actuales_2)
+
+procesar_datos_ganaderia_valores_actuales
+transformar_datos_tambo_valores_actuales
+
+procesar_datos_ganaderia_valores_actuales_2
+transformar_datos_tambo_valores_actuales_2
+```
+
+

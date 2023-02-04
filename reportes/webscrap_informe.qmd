@@ -1,0 +1,212 @@
+---
+title: Informe de webscrap
+title-block-banner: true
+format: 
+  html:
+    embed-resources: true
+    code-fold: true
+    page-layout: full
+    fig_caption: yes
+---
+
+```{css, echo=FALSE}
+.panel-tabset .nav-item {
+  font-size: 30px;
+  font-style: italic
+}
+```
+
+
+## valores actuales
+
+```{r}
+valores_actuales <- targets::tar_read(valores_precios_webscrap_final)
+
+
+knitr::kable(valores_actuales)
+```
+
+
+
+## resultado de las validaciones: 
+
+para ver los resultados de las validaciones de cada recurso
+
+```{r}
+valor_salida <- function(valor_evaluar, prop_mostrar="status", default_mensaje="no hay datos") {
+  
+  if (length(valor_evaluar)==1) {
+    resultado_ganaderia <- default_mensaje
+  } else {
+    resultado_ganaderia <- valor_evaluar[[prop_mostrar]]
+  }
+  resultado_ganaderia
+}
+```
+
+
+## ganaderia
+
+```{r}
+tmp_ganaderia <- targets::tar_read(validar_disponible_datos_ganaderia_valores_actuales)
+no_ganaderia <- "No hay valores acutalizados para ganaderia"  
+
+valor_salida(tmp_ganaderia,"status",no_ganaderia)
+```
+
+::: panel-tabset 
+
+##  ganaderia: df guardado
+
+```{r}
+
+knitr::kable(valor_salida(tmp_ganaderia,"almacenar_df",no_ganaderia))
+
+```
+
+## ganaderia: df sheet
+
+```{r}
+knitr::kable(valor_salida(tmp_ganaderia,"sheet_df",no_ganaderia))
+```
+
+:::
+
+
+## tambo
+
+```{r}
+tmp_tambo <- targets::tar_read(validar_disponible_datos_tambo_valores_actuales)
+no_tambo <- "No hay valores acutalizados para tambo"  
+
+knitr::kable(valor_salida(tmp_tambo,"status",no_tambo))
+```
+
+::: panel-tabset 
+
+##  tambo: df guardado
+
+```{r}
+
+knitr::kable(valor_salida(tmp_tambo,"almacenar_df",no_tambo))
+
+```
+
+## tambo: df sheet
+
+```{r}
+knitr::kable(valor_salida(tmp_tambo,"sheet_df",no_tambo))
+```
+
+:::
+
+## porcinos
+
+```{r}
+tmp_porcinos <- targets::tar_read(validar_disponible_datos_porcinos_valores_actuales)
+no_porcinos <- "No hay valores acutalizados para porcinos"  
+
+knitr::kable(valor_salida(tmp_porcinos,"status",no_porcinos))
+```
+
+::: panel-tabset 
+
+##  porcinos: df guardado
+
+```{r}
+
+knitr::kable(valor_salida(tmp_porcinos,"almacenar_df",no_porcinos))
+
+```
+
+## porcinos: df sheet
+
+```{r}
+knitr::kable(valor_salida(tmp_porcinos,"sheet_df",no_porcinos))
+```
+
+:::
+
+## carne_ave
+
+```{r}
+tmp_carne_ave <- targets::tar_read(validar_disponible_datos_carne_ave_valores_actuales)
+no_carne_ave <- "No hay valores acutalizados para carne_ave"  
+
+knitr::kable(valor_salida(tmp_carne_ave,"status",no_carne_ave))
+```
+
+::: panel-tabset 
+
+##  carne_ave: df guardado
+
+```{r}
+
+knitr::kable(valor_salida(tmp_carne_ave,"almacenar_df",no_carne_ave))
+
+```
+
+## carne_ave: df sheet
+
+```{r}
+knitr::kable(valor_salida(tmp_carne_ave,"sheet_df",no_carne_ave))
+```
+
+:::
+
+
+## huevo
+
+```{r}
+tmp_huevo <- targets::tar_read(validar_disponible_datos_huevo_valores_actuales)
+no_huevo <- "No hay valores acutalizados para huevo"  
+
+knitr::kable(valor_salida(tmp_huevo,"status",no_huevo))
+```
+
+::: panel-tabset 
+
+##  huevo: df guardado
+
+```{r}
+
+knitr::kable(valor_salida(tmp_huevo,"almacenar_df",no_huevo))
+
+```
+
+## huevo: df sheet
+
+```{r}
+knitr::kable(valor_salida(tmp_huevo,"sheet_df",no_huevo))
+```
+
+:::
+
+
+## precipitaciones
+
+```{r}
+tmp_precipitaciones <- targets::tar_read(validar_disponible_datos_precipitaciones_valores_actuales)
+no_precipitaciones <- "No hay valores acutalizados para precipitaciones"  
+
+knitr::kable(valor_salida(tmp_precipitaciones,"status",no_precipitaciones))
+```
+
+::: panel-tabset 
+
+##  precipitaciones: df guardado
+
+```{r}
+
+knitr::kable(valor_salida(tmp_precipitaciones,"almacenar_df",no_precipitaciones))
+
+```
+
+## precipitaciones: df sheet
+
+```{r}
+knitr::kable(valor_salida(tmp_precipitaciones,"sheet_df",no_precipitaciones))
+```
+
+:::
+

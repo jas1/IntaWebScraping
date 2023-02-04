@@ -26,3 +26,31 @@ googlesheets4::sheet_append(ss, data.frame(time=Sys.time()))
 
 ```
 
+# autorizar google drive: 
+
+```{r}
+cfg_yml <- leer_configuracion()
+
+googledrive::drive_deauth()
+
+# Authenticate using token. If no browser opens, the authentication works.
+googledrive::drive_auth(cache = here::here(cfg_yml[["destino_drive_cfg_path"]]), email = cfg_yml[["destino_auth_mail"]])
+
+
+# Authenticate using token. If no browser opens, the authentication works.
+# googlesheets4::gs4_auth(cache = here::here("config",".secrets"), email = "jspairani@gmail.com")
+
+googledrive::drive_ls(cfg_yml[["destino_informes_url"]])
+
+```
+
+## prueba subir a drive
+
+```{r}
+source(here::here("R","source_funciones.R"))
+
+cfg_yml <- leer_configuracion()
+
+subir_informe_final(cfg_yml)
+```
+

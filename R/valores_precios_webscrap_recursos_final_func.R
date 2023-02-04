@@ -1,3 +1,14 @@
+#' valores_precios_webscrap_recursos_final_func
+#'
+#' dada la configuracion, levanta todo lo que esta publicado y lo transforma en una ultima hoja unificada
+#' si hay valores que no fueron actualizados, este metodo tomara lo ultimo publicado porque lee de web.
+#'
+#' @param config configuracion
+#'
+#' @return devuelve el dataframe de recursos.
+#' @export
+#'
+#' @examples
 valores_precios_webscrap_recursos_final_func <- function(config){
   # de la config se extraen todos los nombres de las hojas input:
   # destino_ganaderia_sheet,

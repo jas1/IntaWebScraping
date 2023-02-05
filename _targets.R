@@ -62,11 +62,11 @@ list(
   #   leer_datos_ave_huevos_crudos_func(obtener_datos_recursos_ave_huevos)
   # ),
   # 2.c procesar los datos obtenidos: precipitaciones: leer los datos precipitaciones ------------------------
-  # devuelve el html
-  targets::tar_target(
-    leer_datos_precipitaciones_crudos,
-    leer_datos_precipitaciones_crudos_func(obtener_datos_recursos_precipitaciones)
-  ),
+  # # devuelve el html
+  # targets::tar_target(
+  #   leer_datos_precipitaciones_crudos,
+  #   leer_datos_precipitaciones_crudos_func(obtener_datos_recursos_precipitaciones)
+  # ),
   # 3. procesar los datos obtenidos: ganaderia: extraer los datos ------------------------
   targets::tar_target(
     procesar_datos_ganaderia_valores_actuales,

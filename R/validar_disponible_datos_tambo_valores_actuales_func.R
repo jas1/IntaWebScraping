@@ -13,15 +13,6 @@
 #' @examples validar_disponible_datos_tambo_valores_actuales_func(almacenar_datos_valores, disponibilizar_datos_resultado,config)
 validar_disponible_datos_tambo_valores_actuales_func <- function(almacenar_datos_valores, disponibilizar_datos_resultado,config){
 
-  print("------------------------------------- ")
-  print(almacenar_datos_valores)
-  print("----------------- ")
-
-  print(disponibilizar_datos_resultado)
-  print("----------------- ")
-
-  print(config)
-  print("------------------------------------- ")
   ret <- ''
   if (almacenar_datos_valores != '') {
     # verificar que lo almacenado es igual a lo disponible.

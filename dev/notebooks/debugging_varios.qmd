@@ -1,0 +1,16 @@
+
+# debugging precipitacion
+
+```{r}
+library("targets")
+store_path <- here::here("_targets")
+main_script_path <- here::here("_targets.R")
+
+# targets::tar_delete(store = store_path,"transformar_datos_precipitaciones_valores_actuales")
+# targets::tar_make(script = main_script_path,store = store_path,"transformar_datos_precipitaciones_valores_actuales")
+tmp <- targets::tar_read(store = store_path,"transformar_datos_precipitaciones_valores_actuales")
+tmp <- tmp |> dplyr::mutate(depto_codigo=janitor::make_clean_names(departamento,allow_dupes=TRUE))
+
+tmp |>  dplyr::select(departamento,depto_codigo)
+```
+

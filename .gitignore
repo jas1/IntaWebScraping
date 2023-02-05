@@ -6,3 +6,4 @@ config
 tmp
 renv
 _targets
+*.html

@@ -1,0 +1,6 @@
+Error:
+! Error running targets::tar_make()
+  Target errors: targets::tar_meta(fields = error, complete_only = TRUE)
+  Tips: https://books.ropensci.org/targets/debugging.html
+  Last error: Quarto CLI not found.
+Execution halted

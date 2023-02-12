@@ -39,7 +39,7 @@ output_dl_file <- get_raw_web_file(url_src = web_page,template_output = template
 
 loaded_html <- rvest::read_html(output_dl_file)
 
-df_caja_verde <- extract_rosgan_updated_header(rvest_html_object=loaded_html)
+df_caja_verde <- extract_rosgan_updated_header(output_dl_file)
 
 #   div .marquee > div .marquee-content >  UL
 # li .caja-titulo-verde >

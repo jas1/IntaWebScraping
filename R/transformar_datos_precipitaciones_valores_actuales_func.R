@@ -31,7 +31,7 @@ transformar_datos_precipitaciones_valores_actuales_func <- function(df_procesado
       dplyr::mutate(indices_tabla=glue::glue("{estacion} | {valor} | {departamento} | {descripcion_fecha}")) |>
       dplyr::mutate(indices_fecha=lubridate::dmy(stringr::str_sub(start=50,end=65,descripcion_fecha))) |>
       dplyr::mutate(actualizado_fecha=lubridate::today()) |>
-      dplyr::mutate(valores_tabla=readr::parse_number(valor,locale = readr::locale(decimal_mark = ","))) |>
+      dplyr::mutate(valores_tabla=dplyr::if_else(stringr::str_detect(valor,"---"),0L,readr::parse_number(valor,locale = readr::locale(decimal_mark = ","))) ) |>
       dplyr::mutate(depto_codigo=janitor::make_clean_names(departamento,allow_dupes=TRUE)) |>
       dplyr::mutate(variable="precipitacion") |>
       dplyr::mutate(origen="hidraulica") |>

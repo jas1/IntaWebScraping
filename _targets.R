@@ -18,30 +18,71 @@ list(
     config_valida,
     validar_configuracion(leer_configuracion_scrap)
   ),
+  # 0.2. validar las URL ------------------------
+  # 0.2.a validar url ganaderia y tambo ------------------------
+  targets::tar_target(
+    url_valida_ganaderia_tambo,
+    validar_url(config_valida[['scrap_recursos_ganaderia_url']])
+  ),
+  # 0.2.b validar url ganaderia porcinos ------------------------
+  targets::tar_target(
+    url_valida_porcinos,
+    validar_url(config_valida[['scrap_recursos_porcinos_url']])
+  ),
+  # 0.2.c validar url carne ave huevos ------------------------
+  targets::tar_target(
+    url_valida_carne_ave_huevos,
+    validar_url(config_valida[['scrap_recursos_ave_url']])
+  ),
+  # 0.2.d validar url carne ave huevos ------------------------
+  targets::tar_target(
+    url_valida_precipitaciones,
+    validar_url(config_valida[['scrap_precipitaciones_url']])
+  ),
+  # 0.2.e validar url destino sheet ------------------------
+  targets::tar_target(
+    url_valida_destino_recursos_url,
+    validar_url(config_valida[['destino_recursos_url']])
+  ),
+  # 0.2.f validar url destino informe ------------------------
+  targets::tar_target(
+    url_valida_destino_informes_url,
+    validar_url(config_valida[['destino_informes_url']])
+  ),
+
 
   # 1. obtener los datos crudos: ganaderia y tambos: bajar la pagina. ------------------------
   # devuelve el path del archivo generado
   targets::tar_target(
-    obtener_datos_recursos_ganaderia,
-    get_datos_recursos_ganaderia_func(config_valida)
+    obtener_datos_recursos_ganaderia,{
+      url_valida_ganaderia_tambo # para agregar la dependencia
+      get_datos_recursos_ganaderia_func(config_valida)
+    }
   ),
   # 1.a obtener los datos crudos: porcinos: bajar la pagina. ------------------------
   # devuelve el path del archivo generado
   targets::tar_target(
-    obtener_datos_recursos_porcinos,
-    get_datos_recursos_porcinos_func(config_valida)
+    obtener_datos_recursos_porcinos,{
+      url_valida_porcinos
+      get_datos_recursos_porcinos_func(config_valida)
+    }
   ),
   # 1.b obtener los datos crudos: ave huevos: bajar la pagina. ------------------------
   # devuelve el path del archivo generado
   targets::tar_target(
-    obtener_datos_recursos_ave_huevos,
-    get_datos_recursos_ave_huevos_func(config_valida)
+    obtener_datos_recursos_ave_huevos,{
+      url_valida_carne_ave_huevos
+      get_datos_recursos_ave_huevos_func(config_valida)
+    }
+
   ),
   # 1.c obtener los datos crudos: precipitaciones: bajar la pagina. ------------------------
   # devuelve el path del archivo generado
   targets::tar_target(
-    obtener_datos_recursos_precipitaciones,
-    get_datos_precipitaciones_func(config_valida)
+    obtener_datos_recursos_precipitaciones, {
+      url_valida_precipitaciones
+      get_datos_precipitaciones_func(config_valida)
+    }
   ),
   # 2. procesar los datos obtenidos: ganaderia: leer los datos crudos
   # devuelve el html
@@ -84,8 +125,10 @@ list(
   ),
   # 3.c.x mapeo ------------------------
   targets::tar_target(
-    deptos_distritos_map,
-    get_deptos_distritos_map(config_valida)
+    deptos_distritos_map,{
+      url_valida_destino_recursos_url
+      get_deptos_distritos_map(config_valida)
+    }
   ),
   # 3.c procesar los datos obtenidos: precipitaciones: extraer los datos ------------------------
   targets::tar_target(
@@ -155,32 +198,50 @@ list(
   # 6. disponibilizar ganaderia ------------------------
   targets::tar_target(
     disponibilizar_datos_ganaderia_valores_actuales,
-    disponibilizar_datos_ganaderia_valores_actuales_func(almacenar_datos_ganaderia_valores_actuales,config_valida)
+    {
+      url_valida_destino_recursos_url
+      disponibilizar_datos_ganaderia_valores_actuales_func(almacenar_datos_ganaderia_valores_actuales,config_valida)
+    }
   ),
   # 6.a disponibilizar tambo ------------------------
   targets::tar_target(
     disponibilizar_datos_tambo_valores_actuales,
-    disponibilizar_datos_tambo_valores_actuales_func(almacenar_datos_tambo_valores_actuales,config_valida)
+    {
+      url_valida_destino_recursos_url
+      disponibilizar_datos_tambo_valores_actuales_func(almacenar_datos_tambo_valores_actuales,config_valida)
+    }
   ),
   # 6.b disponibilizar porcinos ------------------------
   targets::tar_target(
     disponibilizar_datos_porcinos_valores_actuales,
-    disponibilizar_datos_porcinos_valores_actuales_func(almacenar_datos_porcinos_valores_actuales,config_valida)
+    {
+      url_valida_destino_recursos_url
+      disponibilizar_datos_porcinos_valores_actuales_func(almacenar_datos_porcinos_valores_actuales,config_valida)
+    }
   ),
   # 6.c disponibilizar carne ave ------------------------
   targets::tar_target(
     disponibilizar_datos_carne_ave_valores_actuales,
-    disponibilizar_datos_carne_ave_valores_actuales_func(almacenar_datos_carne_ave_valores_actuales,config_valida)
+    {
+      url_valida_destino_recursos_url
+      disponibilizar_datos_carne_ave_valores_actuales_func(almacenar_datos_carne_ave_valores_actuales,config_valida)
+    }
   ),
   # 6.d disponibilizar huevo ------------------------
   targets::tar_target(
     disponibilizar_datos_huevo_valores_actuales,
-    disponibilizar_datos_huevo_valores_actuales_func(almacenar_datos_huevo_valores_actuales,config_valida)
+    {
+      url_valida_destino_recursos_url
+      disponibilizar_datos_huevo_valores_actuales_func(almacenar_datos_huevo_valores_actuales,config_valida)
+    }
   ),
   # 6.e disponibilizar precipitaciones ------------------------
   targets::tar_target(
     disponibilizar_datos_precipitaciones_valores_actuales,
-    disponibilizar_datos_precipitaciones_valores_actuales_func(almacenar_datos_precipitaciones_valores_actuales,config_valida)
+    {
+      url_valida_destino_recursos_url
+      disponibilizar_datos_precipitaciones_valores_actuales_func(almacenar_datos_precipitaciones_valores_actuales,config_valida)
+    }
   ),
   # 7. validar ganaderia ------------------------
   targets::tar_target(
@@ -238,9 +299,11 @@ list(
   tarchetypes::tar_quarto(reporte_final,"reportes/webscrap_informe.qmd"),
   # 10 informe final scraping ------------------------
   targets::tar_target(reporte_final_upload,
-                      {print(file.exists(reporte_final))
-                       subir_informe_final(config_valida)}
-
+                      {
+                        url_valida_destino_informes_url
+                        print(file.exists(reporte_final))
+                        subir_informe_final(config_valida)
+                        }
   )
 
 )

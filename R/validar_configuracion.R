@@ -6,14 +6,16 @@ validar_configuracion <- function(config){
 
   # ----------------------------google sheet -----------------------------------
   # destino_recursos_url: "https://docs.google.com/spreadsheets/d/1wayzYcUboTRu3BNpfJxWQXEJ8-lcWJW0UBC9iAqE4xo/edit#gid=0"
-  status_validar_destino_recursos_url <- validar_url(config[['destino_recursos_url']])
+  # status_validar_destino_recursos_url <- validar_url(config[['destino_recursos_url']])
+  # status_validar_destino_informes_url <- validar_url(config[['destino_informes_url']])
+
 
   # ---------------------------- url scrap -------------------------------------
 
-  status_validar_scrap_recursos_ganaderia_url <- validar_url(config[['scrap_recursos_ganaderia_url']])
-  status_validar_scrap_recursos_porcinos_url <- validar_url(config[['scrap_recursos_porcinos_url']])
-  status_validar_scrap_recursos_ave_url <- validar_url(config[['scrap_recursos_ave_url']])
-  status_validar_scrap_precipitaciones_url <- validar_url(config[['scrap_precipitaciones_url']])
+  # status_validar_scrap_recursos_ganaderia_url <- validar_url(config[['scrap_recursos_ganaderia_url']])
+  # status_validar_scrap_recursos_porcinos_url <- validar_url(config[['scrap_recursos_porcinos_url']])
+  # status_validar_scrap_recursos_ave_url <- validar_url(config[['scrap_recursos_ave_url']])
+  # status_validar_scrap_precipitaciones_url <- validar_url(config[['scrap_precipitaciones_url']])
 
   # ---------------------------- file crudo de scrap ---------------------------
 
@@ -59,39 +61,39 @@ validar_configuracion <- function(config){
 
   # ------------------------------- lista variables out ------------------------
 
-  validation_list <- c(status_validar_scrap_timestamp_format,
-                       status_validar_destino_recursos_url,
-                       status_validar_scrap_recursos_ganaderia_url,
-                       status_validar_scrap_recursos_porcinos_url,
-                       status_validar_scrap_recursos_ganaderia_dest_file_pattern,
-                       status_validar_scrap_recursos_porcinos_dest_file_pattern,
-                       status_validar_scrap_raw_store_ganaderia_folder,
-                       status_validar_scrap_raw_store_porcinos_folder,
-                       status_validar_datos_store_ganaderia_folder,
-                       status_validar_datos_store_tambo_folder,
-                       status_validar_datos_store_porcinos_folder,
-                       status_validar_datos_ganaderia_dest_file_pattern,
-                       status_validar_datos_tambo_dest_file_pattern,
-                       status_validar_datos_porcinos_dest_file_pattern,
-                       status_validar_destino_ganaderia_sheet,
-                       status_validar_destino_tambo_sheet,
-                       status_validar_destino_porcinos_sheet,
-                       status_validar_scrap_recursos_ave_url,
-                       status_validar_scrap_recursos_ave_huevo_dest_file_pattern,
-                       status_validar_scrap_raw_store_ave_huevo_folder,
-                       status_validar_datos_store_carne_ave_folder,
-                       status_validar_datos_store_huevo_folder,
-                       status_validar_datos_carne_ave_dest_file_pattern,
-                       status_validar_datos_huevo_dest_file_pattern,
-                       status_validar_destino_carne_ave_sheet,
-                       status_validar_destino_huevo_sheet,
-                       status_validar_scrap_precipitaciones_url,
-                       status_validar_scrap_precipitaciones_dest_file_pattern,
-                       status_validar_scrap_raw_store_precipitaciones_folder,
-                       status_validar_datos_store_precipitaciones_folder,
-                       status_validar_datos_precipitaciones_dest_file_pattern,
-                       status_validar_destino_precipitaciones_sheet,
-                       status_validar_origen_dptos_distritos_map
+  validation_list <- c("status_validar_scrap_timestamp_format"=status_validar_scrap_timestamp_format,
+                       # status_validar_destino_recursos_url,
+                       # status_validar_scrap_recursos_ganaderia_url,
+                       # status_validar_scrap_recursos_porcinos_url,
+                       "status_validar_scrap_recursos_ganaderia_dest_file_pattern"=status_validar_scrap_recursos_ganaderia_dest_file_pattern,
+                       "status_validar_scrap_recursos_porcinos_dest_file_pattern"=status_validar_scrap_recursos_porcinos_dest_file_pattern,
+                       "status_validar_scrap_raw_store_ganaderia_folder"=status_validar_scrap_raw_store_ganaderia_folder,
+                       "status_validar_scrap_raw_store_porcinos_folder"=status_validar_scrap_raw_store_porcinos_folder,
+                       "status_validar_datos_store_ganaderia_folder"=status_validar_datos_store_ganaderia_folder,
+                       "status_validar_datos_store_tambo_folder"=status_validar_datos_store_tambo_folder,
+                       "status_validar_datos_store_porcinos_folder"=status_validar_datos_store_porcinos_folder,
+                       "status_validar_datos_ganaderia_dest_file_pattern"=status_validar_datos_ganaderia_dest_file_pattern,
+                       "status_validar_datos_tambo_dest_file_pattern"=status_validar_datos_tambo_dest_file_pattern,
+                       "status_validar_datos_porcinos_dest_file_pattern"=status_validar_datos_porcinos_dest_file_pattern,
+                       "status_validar_destino_ganaderia_sheet"=status_validar_destino_ganaderia_sheet,
+                       "status_validar_destino_tambo_sheet"=status_validar_destino_tambo_sheet,
+                       "status_validar_destino_porcinos_sheet"=status_validar_destino_porcinos_sheet,
+                       # status_validar_scrap_recursos_ave_url,
+                       "status_validar_scrap_recursos_ave_huevo_dest_file_pattern"=status_validar_scrap_recursos_ave_huevo_dest_file_pattern,
+                       "status_validar_scrap_raw_store_ave_huevo_folder"=status_validar_scrap_raw_store_ave_huevo_folder,
+                       "status_validar_datos_store_carne_ave_folder"=status_validar_datos_store_carne_ave_folder,
+                       "status_validar_datos_store_huevo_folder"=status_validar_datos_store_huevo_folder,
+                       "status_validar_datos_carne_ave_dest_file_pattern"=status_validar_datos_carne_ave_dest_file_pattern,
+                       "status_validar_datos_huevo_dest_file_pattern"=status_validar_datos_huevo_dest_file_pattern,
+                       "status_validar_destino_carne_ave_sheet"=status_validar_destino_carne_ave_sheet,
+                       "status_validar_destino_huevo_sheet"=status_validar_destino_huevo_sheet,
+                       # status_validar_scrap_precipitaciones_url,
+                       "status_validar_scrap_precipitaciones_dest_file_pattern"=status_validar_scrap_precipitaciones_dest_file_pattern,
+                       "status_validar_scrap_raw_store_precipitaciones_folder"=status_validar_scrap_raw_store_precipitaciones_folder,
+                       "status_validar_datos_store_precipitaciones_folder"=status_validar_datos_store_precipitaciones_folder,
+                       "status_validar_datos_precipitaciones_dest_file_pattern"=status_validar_datos_precipitaciones_dest_file_pattern,
+                       "status_validar_destino_precipitaciones_sheet"=status_validar_destino_precipitaciones_sheet,
+                       "status_validar_origen_dptos_distritos_map"=status_validar_origen_dptos_distritos_map
                        )
 
   print(validation_list)

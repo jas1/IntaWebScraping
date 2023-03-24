@@ -54,35 +54,26 @@ list(
   # 1. obtener los datos crudos: ganaderia y tambos: bajar la pagina. ------------------------
   # devuelve el path del archivo generado
   targets::tar_target(
-    obtener_datos_recursos_ganaderia,{
-      url_valida_ganaderia_tambo # para agregar la dependencia
-      get_datos_recursos_ganaderia_func(config_valida)
-    }
+    obtener_datos_recursos_ganaderia,
+      get_datos_recursos_ganaderia_func(config_valida,url_valida_ganaderia_tambo)
   ),
   # 1.a obtener los datos crudos: porcinos: bajar la pagina. ------------------------
   # devuelve el path del archivo generado
   targets::tar_target(
-    obtener_datos_recursos_porcinos,{
-      url_valida_porcinos
-      get_datos_recursos_porcinos_func(config_valida)
-    }
+    obtener_datos_recursos_porcinos,
+      get_datos_recursos_porcinos_func(config_valida,url_valida_porcinos)
   ),
   # 1.b obtener los datos crudos: ave huevos: bajar la pagina. ------------------------
   # devuelve el path del archivo generado
   targets::tar_target(
-    obtener_datos_recursos_ave_huevos,{
-      url_valida_carne_ave_huevos
-      get_datos_recursos_ave_huevos_func(config_valida)
-    }
-
+    obtener_datos_recursos_ave_huevos,
+      get_datos_recursos_ave_huevos_func(config_valida,url_valida_carne_ave_huevos)
   ),
   # 1.c obtener los datos crudos: precipitaciones: bajar la pagina. ------------------------
   # devuelve el path del archivo generado
   targets::tar_target(
-    obtener_datos_recursos_precipitaciones, {
-      url_valida_precipitaciones
-      get_datos_precipitaciones_func(config_valida)
-    }
+    obtener_datos_recursos_precipitaciones,
+      get_datos_precipitaciones_func(config_valida,url_valida_precipitaciones)
   ),
   # 2. procesar los datos obtenidos: ganaderia: leer los datos crudos
   # devuelve el html
@@ -125,10 +116,8 @@ list(
   ),
   # 3.c.x mapeo ------------------------
   targets::tar_target(
-    deptos_distritos_map,{
-      url_valida_destino_recursos_url
-      get_deptos_distritos_map(config_valida)
-    }
+    deptos_distritos_map,
+      get_deptos_distritos_map(config_valida,url_valida_destino_recursos_url)
   ),
   # 3.c procesar los datos obtenidos: precipitaciones: extraer los datos ------------------------
   targets::tar_target(

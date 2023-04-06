@@ -6,12 +6,12 @@ source("R/source_funciones.R")
 options(tidyverse.quiet = TRUE)
 targets::tar_option_set(packages = c("here","config","dplyr", "readr", "tidyr","httr","rvest","googlesheets4"))
 
-leer_configuracion
+config_file <- "config/config.yml"
 list(
   # 0. levantar config ------------------------
   targets::tar_target(
     leer_configuracion_scrap,
-    leer_configuracion()
+    leer_configuracion(config_file)
   ),
   # 0.1 validar config ------------------------
   targets::tar_target(

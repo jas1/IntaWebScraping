@@ -4,7 +4,6 @@
 .Ruserdata
 config
 tmp
-renv
 _targets
 *.html
 *.txt

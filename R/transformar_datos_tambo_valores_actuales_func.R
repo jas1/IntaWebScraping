@@ -21,8 +21,9 @@ transformar_datos_tambo_valores_actuales_func <- function(df_procesar_datos_gana
                     actualizado_fecha=character())
 
   if(nrow(df_procesar_datos_ganaderia_valores_actuales)>0){
-    vacas_tambo <- df_procesar_datos_ganaderia_valores_actuales |>
-      dplyr::filter(stringr::str_detect(indices_tabla,"vacas c/gtía. de preñez"))
+    vacas_tambo <- df_procesar_datos_ganaderia_valores_actuales  |>
+      dplyr::filter(stringr::str_detect(indices_tabla,"vacas") &
+                      stringr::str_detect(indices_tabla,"preñez"))
 
     if (nrow(vacas_tambo) > 0) {
 

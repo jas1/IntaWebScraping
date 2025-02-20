@@ -21,7 +21,11 @@ googlesheets4::gs4_deauth()
 # Authenticate using token. If no browser opens, the authentication works.
 googlesheets4::gs4_auth(cache = here::here("config",".secrets"), email = "jspairani@gmail.com")
 
-ss <- googlesheets4::gs4_get("https://docs.google.com/spreadsheets/d/1wayzYcUboTRu3BNpfJxWQXEJ8-lcWJW0UBC9iAqE4xo/edit#gid=0")
+cfg_yml <- leer_configuracion()
+
+
+#ss <- googlesheets4::gs4_get("https://docs.google.com/spreadsheets/d/1wayzYcUboTRu3BNpfJxWQXEJ8-lcWJW0UBC9iAqE4xo/edit#gid=0")
+ss <- googlesheets4::gs4_get(cfg_yml[["destino_recursos_url"]])
 googlesheets4::sheet_append(ss, data.frame(time=Sys.time()))
 
 ```
@@ -35,12 +39,14 @@ googledrive::drive_deauth()
 
 # Authenticate using token. If no browser opens, the authentication works.
 googledrive::drive_auth(cache = here::here(cfg_yml[["destino_drive_cfg_path"]]), email = cfg_yml[["destino_auth_mail"]])
+googledrive::drive_auth(cache = here::here(cfg_yml[["destino_drive_cfg_path"]]), email = cfg_yml[["destino_auth_mail"]])
 
 
 # Authenticate using token. If no browser opens, the authentication works.
 # googlesheets4::gs4_auth(cache = here::here("config",".secrets"), email = "jspairani@gmail.com")
 
 googledrive::drive_ls(cfg_yml[["destino_informes_url"]])
+googledrive::(cfg_yml[["destino_informes_url"]])
 
 ```
 
